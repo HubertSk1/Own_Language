@@ -1,10 +1,10 @@
 grammar Muttersprache;
 
-tokens {PRINT, READ}
+prog: statments  EOF ;
 
-program:   (NEWLINE* statment)+ ;
+statments: statment* ; 
 
-statment: (assign | print | read) EOE ;
+statment: (print |assign  | read) EOE ;
 
 assign: ID SET value ;
 
@@ -14,6 +14,8 @@ read : READ ;
 
 value: INT | REAL | ID ;
 
+PRINT : 'PRINT';
+READ : 'READ';
 INT :   [0-9]+ ;
 REAL : [0-9]+'.'[0-9]* ;
 MUL :   [ ]*'*'[ ]* ;
@@ -26,4 +28,4 @@ EOE :   [ ]*';'[ ]* ;
 ID  :   [a-zA-Z0-9]+[ ]* ;
 LEFT_P : [ ]*'('[ ]* ;
 RIGHT_P : [ ]*')'[ ]* ;
-NEWLINE: '\r\n' ;
+NEWLINE: '\r\n' -> skip;
