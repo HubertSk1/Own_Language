@@ -2,7 +2,7 @@ grammar Muttersprache;
 
 tokens {PRINT, READ}
 
-program:   statment+ ;
+program:   (NEWLINE* statment)+ ;
 
 statment: (assign | print | read) EOE ;
 
@@ -23,7 +23,7 @@ SUB :   [ ]*'-'[ ]* ;
 SET :   [ ]*'='[ ]* ;
 COMA :  [ ]*','[ ]* ;
 EOE :   [ ]*';'[ ]* ;
-ID  :   [a-zA-Z0-9]+ ;
+ID  :   [a-zA-Z0-9]+[ ]* ;
 LEFT_P : [ ]*'('[ ]* ;
 RIGHT_P : [ ]*')'[ ]* ;
-NEWLINE: '\n' ;
+NEWLINE: '\r\n' ;
