@@ -1,31 +1,37 @@
 grammar Muttersprache;
 
-prog: statments  EOF ;
+prog: statements EOF ;
 
-statments: statment* ; 
+statements: statement* ;
 
-statment: (print |assign  | read) EOE ;
+statement: (print | assign | read) EOE ;
 
-assign: ID SET value ;
+assign: ID SET expr ;
 
-print : PRINT LEFT_P value RIGHT_P ;
+print : PRINT LEFT_P expr RIGHT_P ;
 
-read : READ  LEFT_P ID RIGHT_P;
+read : READ LEFT_P ID RIGHT_P;
 
-value: INT | REAL | ID ;
+expr: expr MUL expr 
+    | expr DIV expr 
+    | expr ADD expr 
+    | expr SUB expr 
+    | INT 
+    | REAL 
+    | ID 
+    | LEFT_P expr RIGHT_P;
 
 PRINT : 'PRINT';
 READ : 'READ';
-INT :   [0-9]+ ;
+INT : [0-9]+ ;
 REAL : [0-9]+'.'[0-9]* ;
-MUL :   [ ]*'*'[ ]* ;
-DIV :   [ ]*'/'[ ]* ;
-ADD :   [ ]*'+'[ ]* ;
-SUB :   [ ]*'-'[ ]* ;
-SET :   [ ]*'='[ ]* ;
-COMA :  [ ]*','[ ]* ;
-EOE :   [ ]*';'[ ]* ;
-ID  :   [a-zA-Z0-9]+[ ]* ;
-LEFT_P : [ ]*'('[ ]* ;
-RIGHT_P : [ ]*')'[ ]* ;
-NEWLINE: '\r\n' -> skip;
+MUL : '*' ;
+DIV : '/' ;
+ADD : '+' ;
+SUB : '-' ;
+SET : '=' ;
+EOE : ';' ;
+ID : [a-zA-Z_][a-zA-Z0-9_]* ;
+LEFT_P : '(' ;
+RIGHT_P : ')' ;
+WS : [ \r\n\t]+ -> skip ;
