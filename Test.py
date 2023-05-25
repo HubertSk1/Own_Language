@@ -3,9 +3,8 @@ from MutterspracheLexer import MutterspracheLexer
 
 def main():
     # Create an input stream from your sample input code
-    input_code = """a=2;
-    b+2;
-    """
+    with open("PlikTestowy.txt", "r") as file:
+        input_code = file.read()
     input_stream = InputStream(input_code)
 
     # Create a lexer instance
