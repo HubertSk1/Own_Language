@@ -10,7 +10,7 @@ assign: ID SET value ;
 
 print : PRINT LEFT_P value RIGHT_P ;
 
-read : READ ;
+read : READ  LEFT_P ID RIGHT_P;
 
 value: INT | REAL | ID ;
 
