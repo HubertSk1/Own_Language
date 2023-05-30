@@ -2,10 +2,11 @@ from antlr4 import *
 from MutterspracheLexer import MutterspracheLexer
 from MutterspracheParser import MutterspracheParser
 from antlr4.tree.Trees import Trees
-
+from MyListener import MyListener
 
 def main():
-    # Create an input stream from your sample input code
+
+    # Open input file
     with open("PlikTestowy.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
@@ -17,22 +18,22 @@ def main():
     token_stream = CommonTokenStream(lexer)
     token_stream.fill()
 
-    # Print all the tokens
-    for token in token_stream.getTokens(start = 0, stop= 1):
-        print(token)
+    # # Print all the tokens
+    # for token in token_stream.getTokens(start = 0, stop= 10000):
+    #     print(token)
     
     # Create a parser instance
     parser = MutterspracheParser(token_stream)
 
-    # Start parsing from the 'prog' rule (or whatever your start rule is)
+    # Start parsing from the 'prog' rule 
     tree = parser.prog()
 
-    # getting names of rules from parser
-    rule_names = parser.ruleNames
+    # # printing parse tree
+    # print(Trees.toStringTree(tree, None, parser))
 
-    # printing parse tree
-    print(Trees.toStringTree(tree, None, parser))
-
+    printer = MyListener()
+    walker = ParseTreeWalker()
+    walker.walk(printer, tree)
 
 if __name__ == '__main__':
     main()

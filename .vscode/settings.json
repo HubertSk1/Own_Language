@@ -1,5 +1,0 @@
-{
-    "python.analysis.extraPaths": [
-        "./generated_by_antlr"
-    ]
-}
