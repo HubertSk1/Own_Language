@@ -1,6 +1,6 @@
 from antlr4 import *
-from MutterspracheLexer import MutterspracheLexer
-from MutterspracheParser import MutterspracheParser
+from MY_LANGLexer import MY_LANGLexer
+from MY_LANGParser import MY_LANGParser
 from antlr4.tree.Trees import Trees
 from MyListener import MyListener
 
@@ -12,7 +12,7 @@ def main():
     input_stream = InputStream(input_code)
 
     # Create a lexer instance
-    lexer = MutterspracheLexer(input_stream)
+    lexer = MY_LANGLexer(input_stream)
 
     # Get all the tokens from the lexer
     token_stream = CommonTokenStream(lexer)
@@ -23,13 +23,13 @@ def main():
     #     print(token)
     
     # Create a parser instance
-    parser = MutterspracheParser(token_stream)
+    parser = MY_LANGParser(token_stream)
 
     # Start parsing from the 'prog' rule 
     tree = parser.prog()
 
-    # # printing parse tree
-    # print(Trees.toStringTree(tree, None, parser))
+    # printing parse tree
+    print(Trees.toStringTree(tree, None, parser))
 
     printer = MyListener()
     walker = ParseTreeWalker()

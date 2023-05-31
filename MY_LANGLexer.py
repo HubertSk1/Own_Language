@@ -1,4 +1,4 @@
-# Generated from Muttersprache.g4 by ANTLR 4.13.0
+# Generated from MY_LANG.g4 by ANTLR 4.13.0
 from antlr4 import *
 from io import StringIO
 import sys
@@ -42,7 +42,7 @@ def serializedATN():
         83,1,6,0,0
     ]
 
-class MutterspracheLexer(Lexer):
+class MY_LANGLexer(Lexer):
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
@@ -78,7 +78,7 @@ class MutterspracheLexer(Lexer):
     ruleNames = [ "PRINT", "READ", "INT", "REAL", "MUL", "DIV", "ADD", "SUB", 
                   "SET", "EOE", "ID", "LEFT_P", "RIGHT_P", "WS" ]
 
-    grammarFileName = "Muttersprache.g4"
+    grammarFileName = "MY_LANG.g4"
 
     def __init__(self, input=None, output:TextIO = sys.stdout):
         super().__init__(input, output)

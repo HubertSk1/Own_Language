@@ -1,4 +1,4 @@
-# Generated from Muttersprache.g4 by ANTLR 4.13.0
+# Generated from MY_LANG.g4 by ANTLR 4.13.0
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -34,9 +34,9 @@ def serializedATN():
         0,68,69,1,0,0,0,69,13,1,0,0,0,70,68,1,0,0,0,5,20,26,52,66,68
     ]
 
-class MutterspracheParser ( Parser ):
+class MY_LANGParser ( Parser ):
 
-    grammarFileName = "Muttersprache.g4"
+    grammarFileName = "MY_LANG.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
@@ -96,14 +96,14 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def statements(self):
-            return self.getTypedRuleContext(MutterspracheParser.StatementsContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.StatementsContext,0)
 
 
         def EOF(self):
-            return self.getToken(MutterspracheParser.EOF, 0)
+            return self.getToken(MY_LANGParser.EOF, 0)
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_prog
+            return MY_LANGParser.RULE_prog
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterProg" ):
@@ -118,14 +118,14 @@ class MutterspracheParser ( Parser ):
 
     def prog(self):
 
-        localctx = MutterspracheParser.ProgContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.ProgContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_prog)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 14
             self.statements()
             self.state = 15
-            self.match(MutterspracheParser.EOF)
+            self.match(MY_LANGParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -144,13 +144,13 @@ class MutterspracheParser ( Parser ):
 
         def statement(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(MutterspracheParser.StatementContext)
+                return self.getTypedRuleContexts(MY_LANGParser.StatementContext)
             else:
-                return self.getTypedRuleContext(MutterspracheParser.StatementContext,i)
+                return self.getTypedRuleContext(MY_LANGParser.StatementContext,i)
 
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_statements
+            return MY_LANGParser.RULE_statements
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterStatements" ):
@@ -165,7 +165,7 @@ class MutterspracheParser ( Parser ):
 
     def statements(self):
 
-        localctx = MutterspracheParser.StatementsContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.StatementsContext(self, self._ctx, self.state)
         self.enterRule(localctx, 2, self.RULE_statements)
         self._la = 0 # Token type
         try:
@@ -197,22 +197,22 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def EOE(self):
-            return self.getToken(MutterspracheParser.EOE, 0)
+            return self.getToken(MY_LANGParser.EOE, 0)
 
         def print_(self):
-            return self.getTypedRuleContext(MutterspracheParser.PrintContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.PrintContext,0)
 
 
         def assign(self):
-            return self.getTypedRuleContext(MutterspracheParser.AssignContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.AssignContext,0)
 
 
         def read(self):
-            return self.getTypedRuleContext(MutterspracheParser.ReadContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.ReadContext,0)
 
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_statement
+            return MY_LANGParser.RULE_statement
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterStatement" ):
@@ -227,7 +227,7 @@ class MutterspracheParser ( Parser ):
 
     def statement(self):
 
-        localctx = MutterspracheParser.StatementContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.StatementContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_statement)
         try:
             self.enterOuterAlt(localctx, 1)
@@ -250,7 +250,7 @@ class MutterspracheParser ( Parser ):
                 raise NoViableAltException(self)
 
             self.state = 28
-            self.match(MutterspracheParser.EOE)
+            self.match(MY_LANGParser.EOE)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -268,17 +268,17 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def ID(self):
-            return self.getToken(MutterspracheParser.ID, 0)
+            return self.getToken(MY_LANGParser.ID, 0)
 
         def SET(self):
-            return self.getToken(MutterspracheParser.SET, 0)
+            return self.getToken(MY_LANGParser.SET, 0)
 
         def expr(self):
-            return self.getTypedRuleContext(MutterspracheParser.ExprContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.ExprContext,0)
 
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_assign
+            return MY_LANGParser.RULE_assign
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterAssign" ):
@@ -293,14 +293,14 @@ class MutterspracheParser ( Parser ):
 
     def assign(self):
 
-        localctx = MutterspracheParser.AssignContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.AssignContext(self, self._ctx, self.state)
         self.enterRule(localctx, 6, self.RULE_assign)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 30
-            self.match(MutterspracheParser.ID)
+            self.match(MY_LANGParser.ID)
             self.state = 31
-            self.match(MutterspracheParser.SET)
+            self.match(MY_LANGParser.SET)
             self.state = 32
             self.expr(0)
         except RecognitionException as re:
@@ -320,20 +320,20 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def PRINT(self):
-            return self.getToken(MutterspracheParser.PRINT, 0)
+            return self.getToken(MY_LANGParser.PRINT, 0)
 
         def LEFT_P(self):
-            return self.getToken(MutterspracheParser.LEFT_P, 0)
+            return self.getToken(MY_LANGParser.LEFT_P, 0)
 
         def expr(self):
-            return self.getTypedRuleContext(MutterspracheParser.ExprContext,0)
+            return self.getTypedRuleContext(MY_LANGParser.ExprContext,0)
 
 
         def RIGHT_P(self):
-            return self.getToken(MutterspracheParser.RIGHT_P, 0)
+            return self.getToken(MY_LANGParser.RIGHT_P, 0)
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_print
+            return MY_LANGParser.RULE_print
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterPrint" ):
@@ -348,18 +348,18 @@ class MutterspracheParser ( Parser ):
 
     def print_(self):
 
-        localctx = MutterspracheParser.PrintContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.PrintContext(self, self._ctx, self.state)
         self.enterRule(localctx, 8, self.RULE_print)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 34
-            self.match(MutterspracheParser.PRINT)
+            self.match(MY_LANGParser.PRINT)
             self.state = 35
-            self.match(MutterspracheParser.LEFT_P)
+            self.match(MY_LANGParser.LEFT_P)
             self.state = 36
             self.expr(0)
             self.state = 37
-            self.match(MutterspracheParser.RIGHT_P)
+            self.match(MY_LANGParser.RIGHT_P)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -377,19 +377,19 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def READ(self):
-            return self.getToken(MutterspracheParser.READ, 0)
+            return self.getToken(MY_LANGParser.READ, 0)
 
         def LEFT_P(self):
-            return self.getToken(MutterspracheParser.LEFT_P, 0)
+            return self.getToken(MY_LANGParser.LEFT_P, 0)
 
         def ID(self):
-            return self.getToken(MutterspracheParser.ID, 0)
+            return self.getToken(MY_LANGParser.ID, 0)
 
         def RIGHT_P(self):
-            return self.getToken(MutterspracheParser.RIGHT_P, 0)
+            return self.getToken(MY_LANGParser.RIGHT_P, 0)
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_read
+            return MY_LANGParser.RULE_read
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterRead" ):
@@ -404,18 +404,18 @@ class MutterspracheParser ( Parser ):
 
     def read(self):
 
-        localctx = MutterspracheParser.ReadContext(self, self._ctx, self.state)
+        localctx = MY_LANGParser.ReadContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_read)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 39
-            self.match(MutterspracheParser.READ)
+            self.match(MY_LANGParser.READ)
             self.state = 40
-            self.match(MutterspracheParser.LEFT_P)
+            self.match(MY_LANGParser.LEFT_P)
             self.state = 41
-            self.match(MutterspracheParser.ID)
+            self.match(MY_LANGParser.ID)
             self.state = 42
-            self.match(MutterspracheParser.RIGHT_P)
+            self.match(MY_LANGParser.RIGHT_P)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -433,41 +433,41 @@ class MutterspracheParser ( Parser ):
             self.parser = parser
 
         def INT(self):
-            return self.getToken(MutterspracheParser.INT, 0)
+            return self.getToken(MY_LANGParser.INT, 0)
 
         def REAL(self):
-            return self.getToken(MutterspracheParser.REAL, 0)
+            return self.getToken(MY_LANGParser.REAL, 0)
 
         def ID(self):
-            return self.getToken(MutterspracheParser.ID, 0)
+            return self.getToken(MY_LANGParser.ID, 0)
 
         def LEFT_P(self):
-            return self.getToken(MutterspracheParser.LEFT_P, 0)
+            return self.getToken(MY_LANGParser.LEFT_P, 0)
 
         def expr(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(MutterspracheParser.ExprContext)
+                return self.getTypedRuleContexts(MY_LANGParser.ExprContext)
             else:
-                return self.getTypedRuleContext(MutterspracheParser.ExprContext,i)
+                return self.getTypedRuleContext(MY_LANGParser.ExprContext,i)
 
 
         def RIGHT_P(self):
-            return self.getToken(MutterspracheParser.RIGHT_P, 0)
+            return self.getToken(MY_LANGParser.RIGHT_P, 0)
 
         def MUL(self):
-            return self.getToken(MutterspracheParser.MUL, 0)
+            return self.getToken(MY_LANGParser.MUL, 0)
 
         def DIV(self):
-            return self.getToken(MutterspracheParser.DIV, 0)
+            return self.getToken(MY_LANGParser.DIV, 0)
 
         def ADD(self):
-            return self.getToken(MutterspracheParser.ADD, 0)
+            return self.getToken(MY_LANGParser.ADD, 0)
 
         def SUB(self):
-            return self.getToken(MutterspracheParser.SUB, 0)
+            return self.getToken(MY_LANGParser.SUB, 0)
 
         def getRuleIndex(self):
-            return MutterspracheParser.RULE_expr
+            return MY_LANGParser.RULE_expr
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterExpr" ):
@@ -482,7 +482,7 @@ class MutterspracheParser ( Parser ):
     def expr(self, _p:int=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = MutterspracheParser.ExprContext(self, self._ctx, _parentState)
+        localctx = MY_LANGParser.ExprContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 12
         self.enterRecursionRule(localctx, 12, self.RULE_expr, _p)
@@ -493,23 +493,23 @@ class MutterspracheParser ( Parser ):
             token = self._input.LA(1)
             if token in [3]:
                 self.state = 45
-                self.match(MutterspracheParser.INT)
+                self.match(MY_LANGParser.INT)
                 pass
             elif token in [4]:
                 self.state = 46
-                self.match(MutterspracheParser.REAL)
+                self.match(MY_LANGParser.REAL)
                 pass
             elif token in [11]:
                 self.state = 47
-                self.match(MutterspracheParser.ID)
+                self.match(MY_LANGParser.ID)
                 pass
             elif token in [12]:
                 self.state = 48
-                self.match(MutterspracheParser.LEFT_P)
+                self.match(MY_LANGParser.LEFT_P)
                 self.state = 49
                 self.expr(0)
                 self.state = 50
-                self.match(MutterspracheParser.RIGHT_P)
+                self.match(MY_LANGParser.RIGHT_P)
                 pass
             else:
                 raise NoViableAltException(self)
@@ -527,53 +527,53 @@ class MutterspracheParser ( Parser ):
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,3,self._ctx)
                     if la_ == 1:
-                        localctx = MutterspracheParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = MY_LANGParser.ExprContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 54
                         if not self.precpred(self._ctx, 8):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
                         self.state = 55
-                        self.match(MutterspracheParser.MUL)
+                        self.match(MY_LANGParser.MUL)
                         self.state = 56
                         self.expr(9)
                         pass
 
                     elif la_ == 2:
-                        localctx = MutterspracheParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = MY_LANGParser.ExprContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 57
                         if not self.precpred(self._ctx, 7):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
                         self.state = 58
-                        self.match(MutterspracheParser.DIV)
+                        self.match(MY_LANGParser.DIV)
                         self.state = 59
                         self.expr(8)
                         pass
 
                     elif la_ == 3:
-                        localctx = MutterspracheParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = MY_LANGParser.ExprContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 60
                         if not self.precpred(self._ctx, 6):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
                         self.state = 61
-                        self.match(MutterspracheParser.ADD)
+                        self.match(MY_LANGParser.ADD)
                         self.state = 62
                         self.expr(7)
                         pass
 
                     elif la_ == 4:
-                        localctx = MutterspracheParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = MY_LANGParser.ExprContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 63
                         if not self.precpred(self._ctx, 5):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
                         self.state = 64
-                        self.match(MutterspracheParser.SUB)
+                        self.match(MY_LANGParser.SUB)
                         self.state = 65
                         self.expr(6)
                         pass

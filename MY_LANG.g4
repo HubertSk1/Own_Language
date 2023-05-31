@@ -1,4 +1,4 @@
-grammar Muttersprache;
+grammar MY_LANG;
 
 prog: statements EOF ;
 
