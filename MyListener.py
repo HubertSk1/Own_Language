@@ -120,7 +120,7 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             else:
-                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+                raise TypeError(f"Unsupported type for add: {v1.typ}, {v2.typ}")
             
 
         elif ctx.SUB():
@@ -150,7 +150,7 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             else:
-                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+                raise TypeError(f"Unsupported type for sub: {v1.typ}, {v2.typ}")
 
         elif ctx.DIV():
             v1 = self.stack.pop()
@@ -179,7 +179,7 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             else:
-                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+                raise TypeError(f"Unsupported type for div: {v1.typ}, {v2.typ}")
 
         elif ctx.MUL():
             v1 = self.stack.pop()
@@ -208,7 +208,7 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             else:
-                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+                raise TypeError(f"Unsupported type for mul: {v1.typ}, {v2.typ}")
              
 
         
