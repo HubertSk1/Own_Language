@@ -25,32 +25,10 @@ class MyListener(MY_LANGListener):
     #         print(ele)
     #         print(self.variables[ele])
 
-    def enterProg(self, ctx):
-        self.n+=1
-        pass
-
     def exitProg(self, ctx):
         self.gen.print_main_text()
         self.print_stack()
         # self.print_variables()
-        pass
-
-    def enterStatements(self, ctx):
-        pass
-
-    def exitStatements(self, ctx):
-        self.n+=1
-        pass
-
-    def enterStatement(self, ctx):
-        
-        pass
-
-    def exitStatement(self, ctx):
-        self.n+=1
-        pass
-
-    def enterAssign(self, ctx):
         pass
 
     def exitAssign(self, ctx):
@@ -63,25 +41,17 @@ class MyListener(MY_LANGListener):
             self.gen.asign_i32(f"%{self.n}",v.name)
         pass
 
-    def enterPrint(self, ctx):
-        pass
-
     def exitPrint(self, ctx):
         self.n+=1
         v = self.stack.pop()
         if v.typ == "INT":
             self.gen.print_i32(v.name,self.n)
         self.n+=1
-    def enterRead(self, ctx):
-        pass
 
     def exitRead(self, ctx):
         self.n+=1
         pass
         # Perform read logic here using id
-
-    def enterExpr(self, ctx):
-        pass
 
     def exitExpr(self, ctx):
         #TODO ZAIMPLEMENTOWAĆ DZIELENIE. WEWNĄTRZ KAŻDEFO IFA ZROBIĆ OPERACJE DLA DWÓCH INTÓW I REALÓW ODDZIELNIE (v1.typ, v2.typ daje typy zmiennych) 
