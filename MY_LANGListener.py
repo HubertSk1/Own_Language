@@ -98,5 +98,14 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#scale.
+    def enterScale(self, ctx:MY_LANGParser.ScaleContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#scale.
+    def exitScale(self, ctx:MY_LANGParser.ScaleContext):
+        pass
+
+
 
 del MY_LANGParser

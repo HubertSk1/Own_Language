@@ -4,7 +4,7 @@ prog: statements EOF ;
 
 statements: statement* ;
 
-statement: (print | assign | read) EOE ;
+statement: (print | assign | read| scale) EOE ;
 
 assign: (ID|matrix_elem) SET expr ;
 
@@ -28,8 +28,9 @@ row:'[' INT (',' INT)* ']';
 
 matrix: '[' row (',' row)* ']';
 
+scale: SCALE LEFT_P ID COMA INT RIGHT_P;
 
-
+SCALE : 'SCALE';
 PRINT : 'PRINT';
 READ : 'READ';
 INT : [0-9]+ ;

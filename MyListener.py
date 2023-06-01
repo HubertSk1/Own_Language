@@ -1,5 +1,6 @@
 from MY_LANGListener import MY_LANGListener
 from LLVMGenerator import LLVMGenerator
+from MY_LANGParser import MY_LANGParser
 
 
 class Value:
@@ -29,7 +30,7 @@ class MyListener(MY_LANGListener):
     def exitProg(self, ctx):
         self.gen.print_main_text()
         # self.print_stack()
-        self.print_variables()
+        # self.print_variables()
         pass
 
     def exitAssign(self, ctx):
@@ -38,21 +39,45 @@ class MyListener(MY_LANGListener):
         if ctx.ID():
             var_name = ctx.ID().getText()
             if v.typ=="INT":
-                self.variables[var_name]=Value(f"%{self.n}","INT")
-                self.gen.alloca(f"%{self.n}","i32")
-                self.gen.asign_i32(f"%{self.n}",v.name)
+                if var_name in self.variables.keys():
+                    print("doned already")
+                    name = self.variables[var_name].name    
+                    self.gen.asign_i32(name,v.name)
+                else: 
+                    self.variables[var_name]=Value(f"%{self.n}","INT")
+                    self.gen.alloca(f"%{self.n}","i32")
+                    self.gen.asign_i32(f"%{self.n}",v.name)
             if v.typ=="MATRIX":
                 self.variables[var_name]=Value(v.name,"Matrix",v.size)
-            
-
         elif ctx.matrix_elem():
             if v.typ != "INT":
-                raise NotImplementedError("Yet to be done")
+                raise RuntimeError("Only Int are supported for matrix")
             ctx=ctx.matrix_elem()
             self.gen.alloca(f"%{self.n}","i32")
             self.gen.asign_i32(f"%{self.n}",v.name)
             name = ctx.ID().getText()
-            value= self.variables[name]
+            value = self.variables[name]
+            index = int(value.name[1:])
+            y = int(ctx.INT()[0].getText())
+            x = int(ctx.INT()[1].getText())
+            our_data_id = index+1+y*value.size[0]+x
+            self.gen.asign_i32(f'%{our_data_id}',f"%{self.n}")
+            
+    def exitScale(self, ctx):
+        variable_local_name = ctx.ID().getText()
+        value_to_scale = ctx.INT().getText()
+        
+
+        Matrix = self.variables[variable_local_name]
+        if Matrix.typ != "Matrix":
+            raise TypeError("Scale is only supported for Matrixes")
+        x,y = Matrix.size
+        Starting_index = int(Matrix.name[1:])+1
+        for i in range(x*y):
+            id = f'{Starting_index+i}'
+            self.gen.mul_i32(id, f"%{id}", value_to_scale)
+            
+        
 
     def exitPrint(self, ctx):
         self.n+=1
@@ -73,13 +98,11 @@ class MyListener(MY_LANGListener):
         self.n+=1
         if ctx.matrix():
             ctx = ctx.matrix()
-            number_of_rows = len(ctx.row())+1
+            number_of_rows = len(ctx.row())
             row_size = len(ctx.row()[0].INT())
             identifier_for_matrix = self.n
             y=0
             for row_ctx in ctx.row():
-                print("elo")
-                x=0
                 if len(row_ctx.INT()) !=row_size:
                     raise NotImplementedError("Only rectangled matrixes designed")
                 for i in row_ctx.INT():
