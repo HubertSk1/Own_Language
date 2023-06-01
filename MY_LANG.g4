@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:MY_LANG.g4
 grammar MY_LANG;
-========
-grammar My_Own_Language;
->>>>>>>> dea38fcbd9000f12c9bd1e746c762096211b8b9e:My_Own_Lang/My_Own_Language.g4
 
 prog: statements EOF ;
 
@@ -23,7 +19,12 @@ expr: expr MUL expr
     | INT 
     | REAL 
     | ID 
-    | LEFT_P expr RIGHT_P;
+    | LEFT_P expr RIGHT_P
+    | matrix;
+
+matrix: '[' row (',' row)* ']';
+
+row:'[' INT (',' INT)* ']';
 
 PRINT : 'PRINT';
 READ : 'READ';
