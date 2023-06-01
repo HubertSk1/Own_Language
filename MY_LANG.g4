@@ -17,7 +17,8 @@ expr: expr MUL expr
     | expr ADD expr 
     | expr SUB expr 
     | INT 
-    | REAL 
+    | DOUBLE
+    | FLOAT 
     | ID 
     | LEFT_P expr RIGHT_P
     | matrix;
@@ -29,7 +30,8 @@ row:'[' INT (',' INT)* ']';
 PRINT : 'PRINT';
 READ : 'READ';
 INT : [0-9]+ ;
-REAL : [0-9]+'.'[0-9]* ;
+DOUBLE : [0-9]+'.'[0-9]* ;
+FLOAT : [0-9]+'.'[0-9]*'F' ;
 MUL : '*' ;
 DIV : '/' ;
 ADD : '+' ;

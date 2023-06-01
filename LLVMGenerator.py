@@ -26,11 +26,17 @@ class LLVMGenerator():
     def add_i32(self,id,val1,val2):
         self.main_text += f"%{id} = add i32 {val1},{val2}\n"
 
+    def add_double(self, id, val1, val2):
+        self.main_text += f"%{id} = fadd double {val1}, {val2}\n"
+
     def add_float(self, id, val1, val2):
         self.main_text += f"%{id} = fadd float {val1}, {val2}\n"
 
     def sub_i32(self,id,val1,val2):
         self.main_text += f"%{id} = sub i32 {val1},{val2}\n"
+
+    def sub_double(self, id, val1, val2):
+        self.main_text += f"%{id} = fsub double {val1}, {val2}\n"
 
     def sub_float(self, id, val1, val2):
         self.main_text += f"%{id} = fsub float {val1}, {val2}\n"
@@ -38,11 +44,17 @@ class LLVMGenerator():
     def div_i32(self, id, val1, val2):
         self.main_text += f"%{id} = sdiv i32 {val1}, {val2}\n"
 
+    def div_double(self, id, val1, val2):
+        self.main_text += f"%{id} = fdiv double {val1}, {val2}\n"
+    
     def div_float(self, id, val1, val2):
         self.main_text += f"%{id} = fdiv float {val1}, {val2}\n"
 
     def mul_i32(self,id,val1,val2):
         self.main_text += f"%{id} = mul i32 {val1},{val2}\n"
+
+    def mul_double(self, id, val1, val2):
+        self.main_text += f"%{id} = fmul double {val1}, {val2}\n"
 
     def mul_float(self, id, val1, val2):
         self.main_text += f"%{id} = fmul float {val1}, {val2}\n"
@@ -51,6 +63,10 @@ class LLVMGenerator():
         self.main_text += f"%{placeholder} = load i32, i32* {id}\n"
         self.main_text += f"call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), i32 %{placeholder})\n"
 
+    def printf_double(self, id, placeholder):
+        self.main_text += f"%{placeholder} = getelementptr inbounds ([4 x i8], [4 x i8]* @print_f, i32 0, i32 0)\n"
+        self.main_text += f"call i32 (i8*, ...) @printf(i8* %{placeholder}, double {id})\n"
+
     def printf_float(self, id, placeholder):
         self.main_text += f"%{placeholder} = getelementptr inbounds ([4 x i8], [4 x i8]* @print_f, i32 0, i32 0)\n"
         self.main_text += f"call i32 (i8*, ...) @printf(i8* %{placeholder}, float {id})\n"
@@ -58,11 +74,17 @@ class LLVMGenerator():
     def scanf_i32(self, id):
         self.main_text += f"{id} = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @scanformat, i32 0, i32 0), i32* {id})\n"
  
+    def scanf_double(self, id):
+        self.main_text += f"{id}  = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strlf, i32 0, i32 0), double* {id})\n"
+
     def scanf_float(self, id):
         self.main_text += f"{id}  = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strlf, i32 0, i32 0), float* {id})\n"
-
+    
     def asign_i32(self,id,value):
         self.main_text += f"store i32 {value}, i32* {id}\n"
+    
+    def asign_double(self, id, value):
+        self.main_text += f"store double {value}, double* {id}\n"
     
     def asign_float(self, id, value):
         self.main_text += f"store float {value}, float* {id}\n"
@@ -70,6 +92,12 @@ class LLVMGenerator():
     def alloca(self,id,type):
         self.main_text += f"{id} = alloca {type}\n"
 
+    def int_to_double(self, id, val):
+        self.main_text += f"%{id} = sitofp i32 {val} to double\n"
+
     def int_to_float(self, id, val):
         self.main_text += f"%{id} = sitofp i32 {val} to float\n"
+
+    def float_to_double(self, id, val):
+        self.main_text += f"%{id} = sitofp float {val} to double\n"
 
