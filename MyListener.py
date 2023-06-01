@@ -33,33 +33,40 @@ class MyListener(MY_LANGListener):
         pass
 
     def exitAssign(self, ctx):
-        self.n+=1
+        self.n += 1
         v = self.stack.pop()
         var_name = ctx.ID().getText()
-        if v.typ=="INT":
-            self.variables[var_name]=Value(f"%{self.n}","INT")
-            self.gen.alloca(f"%{self.n}","i32")
-            self.gen.asign_i32(f"%{self.n}",v.name)
-        if v.typ=="MATRIX":
-            self.variables[var_name]=Value(v.name,"Matrix")
-        pass
-
+        if v.typ == "INT":
+            self.variables[var_name] = Value(f"%{self.n}", "INT")
+            self.gen.alloca(f"%{self.n}", "i32")
+            self.gen.asign_i32(f"%{self.n}", v.name)
+        elif v.typ == "REAL":
+            self.variables[var_name] = Value(f"%{self.n}", "REAL")
+            self.gen.alloca(f"%{self.n}", "float")
+            self.gen.asign_float(f"%{self.n}", v.name)
+        elif v.typ == "MATRIX":
+            self.variables[var_name] = Value(v.name, "MATRIX")
+  
     def exitPrint(self, ctx):
         self.n+=1
         v = self.stack.pop()
         if v.typ == "INT":
             self.gen.print_i32(v.name,self.n)
+        elif v.typ == "REAL":
+            self.gen.printf_float(v.name,self.n)
         self.n+=1
 
     def exitRead(self, ctx):
         self.n+=1
-        pass
-        # Perform read logic here using id
+        var_name = ctx.ID().getText()
+        id=self.variables[var_name].name
+        if self.variables[var_name].typ == "INT":
+            self.gen.scanf_i32(id)
+        elif self.variables[var_name].typ == "REAL":
+            self.gen.scanf_float(id)
+        self.n+=1
 
     def exitExpr(self, ctx):
-        #TODO ZAIMPLEMENTOWAĆ DZIELENIE. WEWNĄTRZ KAŻDEFO IFA ZROBIĆ OPERACJE DLA DWÓCH INTÓW I REALÓW ODDZIELNIE (v1.typ, v2.typ daje typy zmiennych) 
-        #  w LLVM będą różnice (nie i32). DO ZASTANOWIENIA CZY ZGŁASZAMY BŁĄD JAK SĄ MIESZANE TYPY (MOIM ZDANIEM WTEDY INT RZUTUJEMY NA FLOAT) 
-        #
         self.n+=1
         if ctx.matrix():
             ctx = ctx.matrix()
@@ -87,25 +94,122 @@ class MyListener(MY_LANGListener):
             self.stack.append(self.variables[ctx.ID().getText()])
 
         elif ctx.ADD():
-            v1=self.stack.pop()
-            v2=self.stack.pop()
-            self.gen.add_i32(self.n, v1.name, v2.name)
-            self.stack.append(Value(f"%{self.n}","INT"))
+            v1 = self.stack.pop()
+            v2 = self.stack.pop()
+
+            if v1.typ == "INT" and v2.typ == "INT":
+                self.gen.add_i32(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "INT"))
+
+            elif v1.typ == "REAL" and v2.typ == "REAL":
+                self.gen.add_float(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "REAL"))
+
+            elif v1.typ == "INT" and v2.typ == "REAL":
+                self.n+=1
+                self.gen.int_to_float(self.n, v1.name)
+                self.gen.add_float(self.n+1, f"%{self.n}", v2.name)
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            elif v1.typ == "REAL" and v2.typ == "INT":
+                self.n+=1
+                self.gen.int_to_float(self.n, v2.name)
+                self.gen.add_float(self.n+1, v1.name, f"%{self.n}")
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            else:
+                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+            
 
         elif ctx.SUB():
-            v1=self.stack.pop()
-            v2=self.stack.pop()
-            self.gen.sub_i32(self.n, v1.name, v2.name)
-            self.stack.append(Value(f"%{self.n}","INT"))
+            v1 = self.stack.pop()
+            v2 = self.stack.pop()
+
+            if v1.typ == "INT" and v2.typ == "INT":
+                self.gen.sub_i32(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "INT"))
+            
+            elif v1.typ == "REAL" and v2.typ == "REAL":
+                self.gen.sub_float(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "REAL"))
+
+            elif v1.typ == "INT" and v2.typ == "REAL":
+                self.n+=1
+                self.gen.int_to_float(self.n, v1.name)
+                self.gen.sub_float(self.n+1, f"%{self.n}", v2.name)
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            elif v1.typ == "REAL" and v2.typ == "INT":
+                self.n+=1
+                self.gen.int_to_float(self.n, v2.name)
+                self.gen.sub_float(self.n+1, v1.name, f"%{self.n}")
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            else:
+                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
 
         elif ctx.DIV():
-            raise NotImplementedError("not implemented YET")
+            v1 = self.stack.pop()
+            v2 = self.stack.pop()
+
+            if v1.typ == "INT" and v2.typ == "INT":
+                self.gen.div_i32(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "INT"))
+                
+            elif v1.typ == "REAL" and v2.typ == "REAL":
+                self.gen.div_float(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "REAL"))
+
+            elif v1.typ == "INT" and v2.typ == "REAL":
+                self.n+=1
+                self.gen.int_to_float(self.n, v1.name)
+                self.gen.div_float(self.n+1, f"%{self.n}", v2.name)
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            elif v1.typ == "REAL" and v2.typ == "INT":
+                self.n+=1
+                self.gen.int_to_float(self.n, v2.name)
+                self.gen.div_float(self.n+1, v1.name, f"%{self.n}")
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            else:
+                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
 
         elif ctx.MUL():
-            v1=self.stack.pop()
-            v2=self.stack.pop()
-            self.gen.mul_i32(self.n, v1.name, v2.name)
-            self.stack.append(Value(f"%{self.n}","INT"))
+            v1 = self.stack.pop()
+            v2 = self.stack.pop()
+
+            if v1.typ == "INT" and v2.typ == "INT":
+                self.gen.mul_i32(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "INT"))
+
+            elif v1.typ == "REAL" and v2.typ == "REAL":
+                self.gen.mul_float(self.n, v1.name, v2.name)
+                self.stack.append(Value(f"%{self.n}", "REAL"))
+
+            elif v1.typ == "INT" and v2.typ == "REAL":
+                self.n+=1
+                self.gen.int_to_float(self.n, v1.name)
+                self.gen.mul_float(self.n+1, f"%{self.n}", v2.name)
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1                
+
+            elif v1.typ == "REAL" and v2.typ == "INT":
+                self.n+=1
+                self.gen.int_to_float(self.n, v2.name)
+                self.gen.mul_float(self.n+1, v1.name, f"%{self.n}")
+                self.stack.append(Value(f"%{self.n+1}", "REAL"))
+                self.n+=1
+
+            else:
+                raise TypeError(f"Unsupported type for division: {v1.typ}, {v2.typ}")
+             
 
         
     
