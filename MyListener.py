@@ -35,14 +35,24 @@ class MyListener(MY_LANGListener):
     def exitAssign(self, ctx):
         self.n+=1
         v = self.stack.pop()
-        var_name = ctx.ID().getText()
-        if v.typ=="INT":
-            self.variables[var_name]=Value(f"%{self.n}","INT")
+        if ctx.ID():
+            var_name = ctx.ID().getText()
+            if v.typ=="INT":
+                self.variables[var_name]=Value(f"%{self.n}","INT")
+                self.gen.alloca(f"%{self.n}","i32")
+                self.gen.asign_i32(f"%{self.n}",v.name)
+            if v.typ=="MATRIX":
+                self.variables[var_name]=Value(v.name,"Matrix",v.size)
+            
+
+        elif ctx.matrix_elem():
+            if v.typ != "INT":
+                raise NotImplementedError("Yet to be done")
+            ctx=ctx.matrix_elem()
             self.gen.alloca(f"%{self.n}","i32")
             self.gen.asign_i32(f"%{self.n}",v.name)
-        if v.typ=="MATRIX":
-            self.variables[var_name]=Value(v.name,"Matrix")
-        pass
+            name = ctx.ID().getText()
+            value= self.variables[name]
 
     def exitPrint(self, ctx):
         self.n+=1
@@ -63,11 +73,12 @@ class MyListener(MY_LANGListener):
         self.n+=1
         if ctx.matrix():
             ctx = ctx.matrix()
-            number_of_rows = len(ctx.row())
+            number_of_rows = len(ctx.row())+1
             row_size = len(ctx.row()[0].INT())
             identifier_for_matrix = self.n
             y=0
             for row_ctx in ctx.row():
+                print("elo")
                 x=0
                 if len(row_ctx.INT()) !=row_size:
                     raise NotImplementedError("Only rectangled matrixes designed")
@@ -75,7 +86,7 @@ class MyListener(MY_LANGListener):
                     self.n+=1
                     self.gen.alloca(f"%{self.n}","i32")
                     self.gen.asign_i32(f"%{self.n}",i.getText())
-            self.stack.append(Value(f"%{identifier_for_matrix}", "MATRIX",(number_of_rows,row_size)))    
+            self.stack.append(Value(f"%{identifier_for_matrix}", "MATRIX",size=(number_of_rows,row_size)))    
         
         elif ctx.INT():
             self.stack.append(Value(ctx.INT().getText(),"INT"))

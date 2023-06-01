@@ -6,11 +6,13 @@ statements: statement* ;
 
 statement: (print | assign | read) EOE ;
 
-assign: ID SET expr ;
+assign: (ID|matrix_elem) SET expr ;
 
 print : PRINT LEFT_P expr RIGHT_P ;
 
 read : READ LEFT_P ID RIGHT_P;
+
+matrix_elem : ID '['INT COMA INT']' ;
 
 expr: expr MUL expr 
     | expr DIV expr 
@@ -22,9 +24,11 @@ expr: expr MUL expr
     | LEFT_P expr RIGHT_P
     | matrix;
 
+row:'[' INT (',' INT)* ']';
+
 matrix: '[' row (',' row)* ']';
 
-row:'[' INT (',' INT)* ']';
+
 
 PRINT : 'PRINT';
 READ : 'READ';
@@ -36,6 +40,7 @@ ADD : '+' ;
 SUB : '-' ;
 SET : '=' ;
 EOE : ';' ;
+COMA: ',' ;
 ID : [a-zA-Z_][a-zA-Z0-9_]* ;
 LEFT_P : '(' ;
 RIGHT_P : ')' ;
