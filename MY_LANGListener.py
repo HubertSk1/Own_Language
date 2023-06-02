@@ -62,6 +62,24 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#to_double.
+    def enterTo_double(self, ctx:MY_LANGParser.To_doubleContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#to_double.
+    def exitTo_double(self, ctx:MY_LANGParser.To_doubleContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#to_float.
+    def enterTo_float(self, ctx:MY_LANGParser.To_floatContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#to_float.
+    def exitTo_float(self, ctx:MY_LANGParser.To_floatContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#expr.
     def enterExpr(self, ctx:MY_LANGParser.ExprContext):
         pass

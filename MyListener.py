@@ -29,11 +29,11 @@ class MyListener(MY_LANGListener):
     def exitProg(self, ctx):
         self.gen.print_main_text()
         # self.print_stack()
-        self.print_variables()
+        # self.print_variables()
         pass
 
     def exitAssign(self, ctx):
-        self.n += 1
+        #self.n += 1
         v = self.stack.pop()
         var_name = ctx.ID().getText()
         if v.typ == "INT":
@@ -61,6 +61,38 @@ class MyListener(MY_LANGListener):
         elif v.typ == "FLOAT":
             self.gen.printf_float(v.name,self.n)
         self.n+=1
+    
+    def exitTo_float(self, ctx):
+        self.n+=1
+        v = self.variables[ctx.ID().getText()]
+        self.gen.alloca(f"%{self.n}","float")
+        if v.typ == "INT":
+            self.gen.int_to_float(self.n, v.name)
+        elif v.typ == "DOUBLE":
+            self.gen.double_to_float(self.n, v.name)
+        elif v.typ == "FLOAT":
+            return
+        var_name = ctx.ID().getText()
+        self.variables[var_name].name=f"%{self.n}"
+        self.variables[var_name].typ="FLOAT"
+        self.n+=1
+
+    def exitTo_double(self, ctx):
+        self.n+=1
+        v = self.variables[ctx.ID().getText()]
+        self.gen.alloca(f"%{self.n}","double")
+        if v.typ == "INT":
+            self.gen.int_to_double(self.n, v.name)
+        elif v.typ == "DOUBLE":
+            return
+        elif v.typ == "FLOAT":
+            self.gen.float_to_double(self.n, v.name)
+        var_name = ctx.ID().getText()
+        self.variables[var_name].name=f"%{self.n}"
+        self.variables[var_name].typ="DOUBLE"
+        self.n+=1
+        
+        
 
     def exitRead(self, ctx):
         self.n+=1
@@ -75,7 +107,7 @@ class MyListener(MY_LANGListener):
         self.n+=1
 
     def exitExpr(self, ctx):
-        self.n+=1
+        #self.n+=1
         if ctx.matrix():
             ctx = ctx.matrix()
             number_of_rows = len(ctx.row())
@@ -99,7 +131,7 @@ class MyListener(MY_LANGListener):
             self.stack.append(Value(ctx.DOUBLE().getText()+"0","DOUBLE"))
         
         elif ctx.FLOAT():
-            self.stack.append(Value(ctx.FLOAT().getText()+"0","FLOAT"))
+            self.stack.append(Value(ctx.FLOAT().getText()[:-1]+"0","FLOAT"))
 
         elif ctx.ID():
             self.stack.append(self.variables[ctx.ID().getText()])
@@ -348,6 +380,7 @@ class MyListener(MY_LANGListener):
 
             else:
                 raise TypeError(f"Unsupported type for mul: {v1.typ}, {v2.typ}")
+    
              
 
         

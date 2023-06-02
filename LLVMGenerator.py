@@ -20,7 +20,7 @@ class LLVMGenerator():
         text += "define i32 @main() #0{\n"
         text += self.main_text
         text += "ret i32 0 }\n"
-        print(self.main_text)
+        print(text)
         return text
 
     def add_i32(self,id,val1,val2):
@@ -100,4 +100,8 @@ class LLVMGenerator():
 
     def float_to_double(self, id, val):
         self.main_text += f"%{id} = sitofp float {val} to double\n"
+
+    def double_to_float(self, id, val):
+        self.main_text += f"%{id} = sitofp double {val} to float\n"
+
 
