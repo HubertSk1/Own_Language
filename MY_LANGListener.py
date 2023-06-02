@@ -62,6 +62,15 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#matrix_add.
+    def enterMatrix_add(self, ctx:MY_LANGParser.Matrix_addContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#matrix_add.
+    def exitMatrix_add(self, ctx:MY_LANGParser.Matrix_addContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#matrix_elem.
     def enterMatrix_elem(self, ctx:MY_LANGParser.Matrix_elemContext):
         pass

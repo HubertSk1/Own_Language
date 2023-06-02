@@ -7,7 +7,7 @@ from MyListener import MyListener
 def main():
 
     # Open input file
-    with open("Testy/MatrixScale.txt", "r") as file:
+    with open("Testy/MatrixAdd.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 
@@ -34,6 +34,7 @@ def main():
     printer = MyListener()
     walker = ParseTreeWalker()
     walker.walk(printer, tree)
-
+    whole_program_LLVM = printer.gen.print_main_text()
+    # print(whole_program_LLVM)
 if __name__ == '__main__':
     main()

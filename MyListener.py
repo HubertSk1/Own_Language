@@ -1,5 +1,6 @@
 from MY_LANGListener import MY_LANGListener
 from LLVMGenerator import LLVMGenerator
+from MY_LANGParser import MY_LANGParser
 
 
 class Value:
@@ -27,39 +28,7 @@ class MyListener(MY_LANGListener):
             print(self.variables[ele])
 
     def exitProg(self, ctx):
-        self.gen.print_main_text()
-        # self.print_stack()
-        self.print_variables()
         pass
-
-    def exitAssign(self, ctx):
-        self.n += 1
-        v = self.stack.pop()
-        var_name = ctx.ID().getText()
-        if ctx.ID():
-            if v.typ == "INT":
-                self.variables[var_name] = Value(f"%{self.n}", "INT")
-                self.gen.alloca(f"%{self.n}", "i32")
-                self.gen.asign_i32(f"%{self.n}", v.name)
-            elif v.typ == "REAL":
-                self.variables[var_name] = Value(f"%{self.n}", "REAL")
-                self.gen.alloca(f"%{self.n}", "float")
-                self.gen.asign_float(f"%{self.n}", v.name)
-            elif v.typ == "MATRIX":
-                self.variables[var_name] = Value(v.name, "MATRIX")
-        elif ctx.matrix_elem():
-            if v.typ != "INT":
-                raise RuntimeError("Only Int are supported for matrix")
-            ctx=ctx.matrix_elem()
-            self.gen.alloca(f"%{self.n}","i32")
-            self.gen.asign_i32(f"%{self.n}",v.name)
-            name = ctx.ID().getText()
-            value = self.variables[name]
-            index = int(value.name[1:])
-            y = int(ctx.INT()[0].getText())
-            x = int(ctx.INT()[1].getText())
-            our_data_id = index+1+y*value.size[0]+x
-            self.gen.asign_i32(f'%{our_data_id}',f"%{self.n}")
             
     def exitAssign(self, ctx):
         self.n+=1
@@ -99,8 +68,17 @@ class MyListener(MY_LANGListener):
             our_data_id = index+1+y*value.size[0]+x
             self.gen.asign_i32(f'%{our_data_id}',f"%{self.n}")
 
-
-
+    def exitMatrix_add(self, ctx):
+        name2 = ctx.ID()[0].getText()
+        name1 = ctx.ID()[1].getText()
+        value1 = self.variables[name1]
+        value2 = self.variables[name2]
+        if value1.size  != value2.size:
+            raise ValueError(f"matrixes {name1} and {name2} need to be the same sizes")
+        index1 = int(value1.name[1:])+1
+        index2 = int(value2.name[1:])+1
+        for s in range (value1.size[1]*value1.size[0]):
+            self.gen.add_i32(f"{index1+s}",f"%{index2+s}",f"%{index1+s}")
 
     def exitScale(self, ctx):
         variable_local_name = ctx.ID().getText()
