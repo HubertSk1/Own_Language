@@ -163,6 +163,16 @@ class MyListener(MY_LANGListener):
         elif ctx.ID():
             self.stack.append(self.variables[ctx.ID().getText()])
 
+        elif ctx.matrix_elem():
+            ctx = ctx.matrix_elem()
+            name = ctx.ID().getText()
+            value = self.variables[name]
+            index = int(value.name[1:])
+            y = int(ctx.INT()[0].getText())
+            x = int(ctx.INT()[1].getText())
+            our_data_id = index+1+y*value.size[0]+x
+            self.stack.append(Value(f"%{our_data_id}", "INT"))
+
         elif ctx.ADD():
             v1 = self.stack.pop()
             v2 = self.stack.pop()

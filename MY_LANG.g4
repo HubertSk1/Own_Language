@@ -22,7 +22,8 @@ expr: expr MUL expr
     | REAL 
     | ID 
     | LEFT_P expr RIGHT_P
-    | matrix;
+    | matrix
+    | matrix_elem;
 
 row:'[' INT (',' INT)* ']';
 
