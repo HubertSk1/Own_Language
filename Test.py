@@ -29,7 +29,7 @@ def main():
     tree = parser.prog()
 
     # printing parse tree
-    print(Trees.toStringTree(tree, None, parser))
+    # print(Trees.toStringTree(tree, None, parser))
 
     printer = MyListener()
     walker = ParseTreeWalker()

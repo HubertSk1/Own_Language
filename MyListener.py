@@ -3,6 +3,7 @@ from LLVMGenerator import LLVMGenerator
 from MY_LANGParser import MY_LANGParser
 
 
+
 class Value:
     def __init__(self, name_of_variable, type_of_variable, size=None):
         self.name = name_of_variable
@@ -279,8 +280,3 @@ class MyListener(MY_LANGListener):
 
             else:
                 raise TypeError(f"Unsupported type for mul: {v1.typ}, {v2.typ}")
-             
-
-        
-    
-        
