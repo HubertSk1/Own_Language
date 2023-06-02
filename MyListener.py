@@ -47,6 +47,21 @@ class MyListener(MY_LANGListener):
         elif v.typ == "MATRIX":
             self.variables[var_name] = Value(v.name, "MATRIX")
   
+    def exitScale(self, ctx):
+        variable_local_name = ctx.ID().getText()
+        value_to_scale = ctx.INT().getText()
+        
+
+        Matrix = self.variables[variable_local_name]
+        if Matrix.typ != "Matrix":
+            raise TypeError("Scale is only supported for Matrixes")
+        x,y = Matrix.size
+        Starting_index = int(Matrix.name[1:])+1
+        for i in range(x*y):
+            id = f'{Starting_index+i}'
+            self.gen.mul_i32(id, f"%{id}", value_to_scale)
+
+
     def exitPrint(self, ctx):
         self.n+=1
         v = self.stack.pop()
