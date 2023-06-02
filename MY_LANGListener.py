@@ -62,12 +62,30 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#matrix_elem.
+    def enterMatrix_elem(self, ctx:MY_LANGParser.Matrix_elemContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#matrix_elem.
+    def exitMatrix_elem(self, ctx:MY_LANGParser.Matrix_elemContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#expr.
     def enterExpr(self, ctx:MY_LANGParser.ExprContext):
         pass
 
     # Exit a parse tree produced by MY_LANGParser#expr.
     def exitExpr(self, ctx:MY_LANGParser.ExprContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#row.
+    def enterRow(self, ctx:MY_LANGParser.RowContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#row.
+    def exitRow(self, ctx:MY_LANGParser.RowContext):
         pass
 
 
@@ -80,12 +98,12 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MY_LANGParser#row.
-    def enterRow(self, ctx:MY_LANGParser.RowContext):
+    # Enter a parse tree produced by MY_LANGParser#scale.
+    def enterScale(self, ctx:MY_LANGParser.ScaleContext):
         pass
 
-    # Exit a parse tree produced by MY_LANGParser#row.
-    def exitRow(self, ctx:MY_LANGParser.RowContext):
+    # Exit a parse tree produced by MY_LANGParser#scale.
+    def exitScale(self, ctx:MY_LANGParser.ScaleContext):
         pass
 
 

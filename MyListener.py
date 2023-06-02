@@ -75,7 +75,15 @@ class MyListener(MY_LANGListener):
                     self.variables[var_name]=Value(f"%{self.n}","INT")
                     self.gen.alloca(f"%{self.n}","i32")
                     self.gen.asign_i32(f"%{self.n}",v.name)
-            if v.typ=="MATRIX":
+            elif v.typ == "REAL":
+                if var_name in self.variables.keys():
+                    name = self.variables[var_name].name    
+                    self.gen.asign_float(name,v.name)
+                else:
+                    self.variables[var_name] = Value(f"%{self.n}", "REAL")
+                    self.gen.alloca(f"%{self.n}", "float")
+                    self.gen.asign_float(f"%{self.n}", v.name)
+            elif v.typ=="MATRIX":
                 self.variables[var_name]=Value(v.name,"Matrix",v.size)
         elif ctx.matrix_elem():
             if v.typ != "INT":
