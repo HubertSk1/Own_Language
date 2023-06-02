@@ -69,8 +69,8 @@ class MyListener(MY_LANGListener):
             self.gen.asign_i32(f'%{our_data_id}',f"%{self.n}")
 
     def exitMatrix_add(self, ctx):
-        name2 = ctx.ID()[0].getText()
-        name1 = ctx.ID()[1].getText()
+        name1 = ctx.ID()[0].getText()
+        name2 = ctx.ID()[1].getText()
         value1 = self.variables[name1]
         value2 = self.variables[name2]
         if value1.size  != value2.size:
@@ -78,7 +78,19 @@ class MyListener(MY_LANGListener):
         index1 = int(value1.name[1:])+1
         index2 = int(value2.name[1:])+1
         for s in range (value1.size[1]*value1.size[0]):
-            self.gen.add_i32(f"{index1+s}",f"%{index2+s}",f"%{index1+s}")
+            self.gen.add_i32(f"{index1+s}",f"%{index1+s}",f"%{index2+s}")
+
+    def exitMatrix_size(self, ctx):
+        name1 = ctx.ID()[0].getText()
+        name2 = ctx.ID()[1].getText()
+        name3 = ctx.ID()[2].getText()
+        value1 = self.variables[name1]
+        value2 = self.variables[name2]
+        value3 = self.variables[name3]
+        y= value1.size[0]
+        x=value1.size[1]
+        self.gen.asign_i32(value2.name,y)
+        self.gen.asign_i32(value3.name,x)
 
     def exitScale(self, ctx):
         variable_local_name = ctx.ID().getText()

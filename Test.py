@@ -7,7 +7,7 @@ from MyListener import MyListener
 def main():
 
     # Open input file
-    with open("Testy/MatrixAdd.txt", "r") as file:
+    with open("Testy/MatrixSize.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 
