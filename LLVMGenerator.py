@@ -20,7 +20,7 @@ class LLVMGenerator():
         text += "define i32 @main() #0{\n"
         text += self.main_text
         text += "ret i32 0 }\n"
-        print(self.main_text)
+        # print(self.main_text)
         return text
 
     def add_i32(self,id,val1,val2):
