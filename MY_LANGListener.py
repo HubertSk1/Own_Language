@@ -62,30 +62,30 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MY_LANGParser#matrix_add.
-    def enterMatrix_add(self, ctx:MY_LANGParser.Matrix_addContext):
+    # Enter a parse tree produced by MY_LANGParser#arg_list.
+    def enterArg_list(self, ctx:MY_LANGParser.Arg_listContext):
         pass
 
-    # Exit a parse tree produced by MY_LANGParser#matrix_add.
-    def exitMatrix_add(self, ctx:MY_LANGParser.Matrix_addContext):
-        pass
-
-
-    # Enter a parse tree produced by MY_LANGParser#matrix_elem.
-    def enterMatrix_elem(self, ctx:MY_LANGParser.Matrix_elemContext):
-        pass
-
-    # Exit a parse tree produced by MY_LANGParser#matrix_elem.
-    def exitMatrix_elem(self, ctx:MY_LANGParser.Matrix_elemContext):
+    # Exit a parse tree produced by MY_LANGParser#arg_list.
+    def exitArg_list(self, ctx:MY_LANGParser.Arg_listContext):
         pass
 
 
-    # Enter a parse tree produced by MY_LANGParser#matrix_size.
-    def enterMatrix_size(self, ctx:MY_LANGParser.Matrix_sizeContext):
+    # Enter a parse tree produced by MY_LANGParser#function_header.
+    def enterFunction_header(self, ctx:MY_LANGParser.Function_headerContext):
         pass
 
-    # Exit a parse tree produced by MY_LANGParser#matrix_size.
-    def exitMatrix_size(self, ctx:MY_LANGParser.Matrix_sizeContext):
+    # Exit a parse tree produced by MY_LANGParser#function_header.
+    def exitFunction_header(self, ctx:MY_LANGParser.Function_headerContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#define.
+    def enterDefine(self, ctx:MY_LANGParser.DefineContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#define.
+    def exitDefine(self, ctx:MY_LANGParser.DefineContext):
         pass
 
 
@@ -98,30 +98,12 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MY_LANGParser#row.
-    def enterRow(self, ctx:MY_LANGParser.RowContext):
+    # Enter a parse tree produced by MY_LANGParser#typ.
+    def enterTyp(self, ctx:MY_LANGParser.TypContext):
         pass
 
-    # Exit a parse tree produced by MY_LANGParser#row.
-    def exitRow(self, ctx:MY_LANGParser.RowContext):
-        pass
-
-
-    # Enter a parse tree produced by MY_LANGParser#matrix.
-    def enterMatrix(self, ctx:MY_LANGParser.MatrixContext):
-        pass
-
-    # Exit a parse tree produced by MY_LANGParser#matrix.
-    def exitMatrix(self, ctx:MY_LANGParser.MatrixContext):
-        pass
-
-
-    # Enter a parse tree produced by MY_LANGParser#scale.
-    def enterScale(self, ctx:MY_LANGParser.ScaleContext):
-        pass
-
-    # Exit a parse tree produced by MY_LANGParser#scale.
-    def exitScale(self, ctx:MY_LANGParser.ScaleContext):
+    # Exit a parse tree produced by MY_LANGParser#typ.
+    def exitTyp(self, ctx:MY_LANGParser.TypContext):
         pass
 
 

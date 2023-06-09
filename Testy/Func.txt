@@ -1,0 +1,5 @@
+DEFINE int illegdsaal(INT a,REAL b)
+    BEGIN
+    a=2;
+    PRINT(a);
+    END

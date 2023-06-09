@@ -2,21 +2,22 @@ grammar MY_LANG;
 
 prog: statements EOF ;
 
-statements: statement* ;
+statements: define* statement* ;
 
-statement: (print | assign | read| scale | matrix_add |matrix_size) EOE ;
+statement: (print | assign | read ) EOE ;
 
-assign: (ID|matrix_elem) SET expr ;
+assign: ID SET expr ;
 
 print : PRINT LEFT_P expr RIGHT_P ;
 
 read : READ LEFT_P ID RIGHT_P;
 
-matrix_add : M_ADD LEFT_P ID COMA ID RIGHT_P;
+arg_list : ID (COMA ID)*;
 
-matrix_elem : ID '['INT COMA INT']' ;
+function_header : DEF typ ID LEFT_P  arg_list RIGHT_P;
 
-matrix_size : M_SIZE LEFT_P ID COMA ID COMA ID RIGHT_P;
+define : function_header BEGIN statement* END;
+
 
 expr: expr MUL expr 
     | expr DIV expr 
@@ -25,19 +26,15 @@ expr: expr MUL expr
     | INT 
     | REAL 
     | ID 
-    | LEFT_P expr RIGHT_P
-    | matrix
-    | matrix_elem;
+    | LEFT_P expr RIGHT_P;
 
-row:'[' INT (',' INT)* ']';
+typ: INT_TYPE | REAL_TYPE;
 
-matrix: '[' row (',' row)* ']';
-
-scale: SCALE LEFT_P ID COMA INT RIGHT_P;
-
-M_SIZE :'SIZE';
-M_ADD : 'ADD';
-SCALE : 'SCALE';
+INT_TYPE : 'int' ;
+REAL_TYPE : 'real';
+DEF : 'DEFINE';
+BEGIN : 'BEGIN';
+END : 'END';
 PRINT : 'PRINT';
 READ : 'READ';
 INT : '-'?[0-9]+ ;
