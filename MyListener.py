@@ -10,6 +10,7 @@ class MY_Lang_Base_Error(Exception):
 class My_Lang_Type_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
+        
 class MY_Lang_Override_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
@@ -17,6 +18,11 @@ class MY_Lang_Override_Exception(MY_Lang_Base_Error):
 class MY_LANG_Undefined_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
+
+class MY_LANG_Not_Supported_Arguments_type(MY_Lang_Base_Error):
+    def __init__(self,message):
+        super().__init__(message)
+
 
 class Value:
     def __init__(self, name_of_variable, type_of_variable, size=None, namespace = 0):
@@ -55,7 +61,24 @@ class MyListener(MY_LANGListener):
         if ctx.ID().getText() in ["PRINT","READ","BEGIN","END","illegal"]:
             raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()} ")
         else:
-            self.gen.function_start(ctx.ID().getText())
+            types=[]
+            names=[]
+            ctx_arg_list = ctx.arg_list()
+            for typ in ctx_arg_list.typ():
+                if typ.getText() =="INT":
+                    types.append("i32")
+                elif typ.getText() =="REAL":
+                    types.append("float")
+                else :
+                    raise MY_LANG_Not_Supported_Arguments_type(f"Unsupported  type as function argument")
+            for name in ctx_arg_list.ID():
+                names.append(name.getText())
+            args=""
+            for i in range(len(names)):
+                args+=types[i]+ " %" + names[i] + ',' 
+            self.gen.function_start(ctx.ID().getText(),args)
+
+
     def exitStatements(self, ctx):
         self.gen.clear_buffer()
 
