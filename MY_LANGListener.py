@@ -89,12 +89,12 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MY_LANGParser#expr.
-    def enterExpr(self, ctx:MY_LANGParser.ExprContext):
+    # Enter a parse tree produced by MY_LANGParser#end_function.
+    def enterEnd_function(self, ctx:MY_LANGParser.End_functionContext):
         pass
 
-    # Exit a parse tree produced by MY_LANGParser#expr.
-    def exitExpr(self, ctx:MY_LANGParser.ExprContext):
+    # Exit a parse tree produced by MY_LANGParser#end_function.
+    def exitEnd_function(self, ctx:MY_LANGParser.End_functionContext):
         pass
 
 
@@ -104,6 +104,15 @@ class MY_LANGListener(ParseTreeListener):
 
     # Exit a parse tree produced by MY_LANGParser#typ.
     def exitTyp(self, ctx:MY_LANGParser.TypContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#expr.
+    def enterExpr(self, ctx:MY_LANGParser.ExprContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#expr.
+    def exitExpr(self, ctx:MY_LANGParser.ExprContext):
         pass
 
 

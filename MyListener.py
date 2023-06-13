@@ -14,6 +14,10 @@ class MY_Lang_Override_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
 
+class MY_LANG_Undefined_Exception(MY_Lang_Base_Error):
+    def __init__(self,message):
+        super().__init__(message)
+
 class Value:
     def __init__(self, name_of_variable, type_of_variable, size=None, namespace = 0):
         self.name = name_of_variable
@@ -26,7 +30,7 @@ class Value:
 class MyListener(MY_LANGListener):
     def __init__(self):
         self.stack = []
-        self.variables = dict() # {"Name" %21: Value}
+        self.global_variables = dict() # {"Name" %21: Value}
         self.local_variables = dict() # {"Local_Name": Value}
         self.functions = []
         self.n = 1
@@ -39,51 +43,74 @@ class MyListener(MY_LANGListener):
             print(ele)
 
     def print_variables(self):
-        for ele in self.variables:
+        for ele in self.global_variables:
             print(ele)
-            print(self.variables[ele])
+            print(self.global_variables[ele])
 
     def exitProg(self, ctx):
         self.print_variables()
     
-    def exitStatements(self, ctx):
-        self.gen.exit_main()
 
     def exitFunction_header(self, ctx):
         if ctx.ID().getText() in ["PRINT","READ","BEGIN","END","illegal"]:
             raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()} ")
         else:
             self.gen.function_start(ctx.ID().getText())
-    
+    def exitStatements(self, ctx):
+        self.gen.clear_buffer()
+
+    def enterDefine(self,ctx):
+        this_namespace = max(self.namespaces)
+        self.current_namespace = this_namespace+1
+        self.namespaces.append(this_namespace+1)
+        self.gen.clear_buffer()
+
     def exitDefine(self, ctx):
-        self.gen.function_end("value")
+        self.current_namespace = 0
+        ctx = ctx.end_function()
+        ID = ctx.ID().getText()
+
+        if ID in self.local_variables.keys():
+            my_name = self.local_variables[ID].name
+        elif ID in self.global_variables.keys():
+            my_name =f"%{self.n}"
+            if self.global_variables[ID].typ == "INT":
+                self.gen.load_int(self.n,self.global_variables[ID].name)
+            elif self.global_variables[ID].typ == "REAL":
+                self.gen.load_real(self.n,self.global_variables[ID].name)
+        else :
+            raise MY_LANG_Undefined_Exception(f"variable {ID} undefined")
+        
+        self.gen.function_end(my_name)
         self.n=1
+        self.current_namespace = 0
 
     def exitAssign(self, ctx):
         v = self.stack.pop()
         if ctx.ID():
             var_name = ctx.ID().getText()
             if v.typ=="INT":
-                if var_name in self.variables.keys():
-                    name = self.variables[var_name].name    
+                if var_name in self.global_variables.keys():
+                    name = self.global_variables[var_name].name    
                     self.gen.asign_i32(name,v.name)
                 else: 
                     if self.current_namespace==0:
-                        self.variables[var_name]=Value(f"@{var_name}","INT")
+                        self.global_variables[var_name]=Value(f"@{var_name}","INT")
                         self.gen.global_var(f"@{var_name}","i32", 0)
                         self.gen.asign_i32(f"@{var_name}",v.name)
+                        print("ale")
                     else: 
-                        self.variables[var_name]=Value(f"%{self.n}","INT")
+                        self.global_variables[var_name]=Value(f"%{self.n}","INT")
                         self.gen.alloca(f"%{self.n}","i32")
                         self.gen.asign_i32(f"%{self.n}",v.name)
                         self.n+=1
 
             elif v.typ == "REAL":
-                if var_name in self.variables.keys():
-                    name = self.variables[var_name].name    
+                if var_name in self.global_variables.keys():
+                    name = self.global_variables[var_name].name    
                     self.gen.asign_float(name,v.name)
                 else:
-                    self.variables[var_name] = Value(f"%{self.n}", "REAL")
+                    self.global_variables[var_name] = Value(f"%{self.n}", "REAL")
                     self.gen.alloca(f"%{self.n}", "float")
                     self.gen.asign_float(f"%{self.n}", v.name)
                     self.n+=1
@@ -98,10 +125,10 @@ class MyListener(MY_LANGListener):
 
     def exitRead(self, ctx):
         var_name = ctx.ID().getText()
-        id=self.variables[var_name].name
-        if self.variables[var_name].typ == "INT":
+        id=self.global_variables[var_name].name
+        if self.global_variables[var_name].typ == "INT":
             self.gen.scanf_i32(id,self.n)
-        elif self.variables[var_name].typ == "REAL":
+        elif self.global_variables[var_name].typ == "REAL":
             self.gen.scanf_float(id,self.n)
 
     def exitExpr(self, ctx):
@@ -112,12 +139,12 @@ class MyListener(MY_LANGListener):
             self.stack.append(Value(ctx.REAL().getText()+"0","REAL"))
 
         elif ctx.ID():
-            if ctx.ID().getText() in self.variables.keys():
-                if self.variables[ctx.ID().getText()].typ=="INT":
-                    self.gen.load_int(self.n,self.variables[ctx.ID().getText()].name)
-                elif self.variables[ctx.ID().getText()].typ=="REAL":
-                    self.gen.load_real(self.n,self.variables[ctx.ID().getText()].name)
-                self.stack.append(Value(f"%{self.n}",self.variables[ctx.ID().getText()].typ))
+            if ctx.ID().getText() in self.global_variables.keys():
+                if self.global_variables[ctx.ID().getText()].typ=="INT":
+                    self.gen.load_int(self.n,self.global_variables[ctx.ID().getText()].name)
+                elif self.global_variables[ctx.ID().getText()].typ=="REAL":
+                    self.gen.load_real(self.n,self.global_variables[ctx.ID().getText()].name)
+                self.stack.append(Value(f"%{self.n}",self.global_variables[ctx.ID().getText()].typ))
                 self.n+=1
 
         elif ctx.ADD():

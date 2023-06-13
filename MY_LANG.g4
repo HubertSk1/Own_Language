@@ -2,7 +2,7 @@ grammar MY_LANG;
 
 prog: statements EOF ;
 
-statements: define* statement* ;
+statements: (statement|define)* ;
 
 statement: (print | assign | read ) EOE ;
 
@@ -12,12 +12,15 @@ print : PRINT LEFT_P expr RIGHT_P ;
 
 read : READ LEFT_P ID RIGHT_P;
 
-arg_list : ID (COMA ID)*;
+arg_list : typ ID (COMA typ ID)*;
 
-function_header : DEF typ ID LEFT_P  arg_list RIGHT_P;
+function_header : DEF ID LEFT_P  arg_list RIGHT_P;
 
-define : function_header BEGIN statement* END;
+define : function_header BEGIN statement* end_function;
 
+end_function : RETURN ID;
+
+typ: INT_TYPE | REAL_TYPE;
 
 expr: expr MUL expr 
     | expr DIV expr 
@@ -28,13 +31,11 @@ expr: expr MUL expr
     | ID 
     | LEFT_P expr RIGHT_P;
 
-typ: INT_TYPE | REAL_TYPE;
-
-INT_TYPE : 'int' ;
-REAL_TYPE : 'real';
+INT_TYPE : 'INT' ;
+REAL_TYPE : 'REAL';
 DEF : 'DEFINE';
 BEGIN : 'BEGIN';
-END : 'END';
+RETURN : 'RETURN';
 PRINT : 'PRINT';
 READ : 'READ';
 INT : '-'?[0-9]+ ;

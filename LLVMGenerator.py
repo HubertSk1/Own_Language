@@ -19,7 +19,7 @@ class LLVMGenerator():
         text += "@.strsfn = private unnamed_addr constant [6 x i8] c\"%[^\\0A]\\00\", align 1\n"
         text += self.header_text
         text += "define i32 @main() #0{\n"
-        text += self.main_text
+        text += self.main_text 
         text += "ret i32 0 }\n"
         # print(self.buffer)
         return text
@@ -55,7 +55,6 @@ class LLVMGenerator():
         self.buffer += f"call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strd, i32 0, i32 0), float {id})\n"
         
         
-
     def scanf_i32(self, id,placeholder):
         self.buffer += f"%{placeholder} = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.stri, i32 0, i32 0), i32* {id})\n"
  
@@ -84,7 +83,7 @@ class LLVMGenerator():
         self.buffer = "define i32 @"+id+"() nounwind {\n"
 
     def function_end(self,id):
-        self.buffer += "ret i32 %"+(id)+"\n"; 
+        self.buffer += f"ret i32 {id}\n"; 
         self.buffer += "}\n"
         self.header_text += self.buffer
         self.buffer = ""
@@ -92,5 +91,6 @@ class LLVMGenerator():
     def global_var(self,var_name,typ,def_value):
         self.header_text+=f"{var_name} = global {typ} {def_value}\n"
 
-    def exit_main(self):
-        self.main_text=self.buffer
+    def clear_buffer(self):
+        self.main_text+=self.buffer
+    
