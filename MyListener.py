@@ -1,7 +1,7 @@
 from MY_LANGListener import MY_LANGListener
 from LLVMGenerator import LLVMGenerator
 from MY_LANGParser import MY_LANGParser
-
+from copy import copy
 
 class MY_Lang_Base_Error(Exception):
     def __init__(self,message):
@@ -10,7 +10,7 @@ class MY_Lang_Base_Error(Exception):
 class My_Lang_Type_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
-        
+
 class MY_Lang_Override_Exception(MY_Lang_Base_Error):
     def __init__(self,message):
         super().__init__(message)
@@ -25,46 +25,56 @@ class MY_LANG_Not_Supported_Arguments_type(MY_Lang_Base_Error):
 
 
 class Value:
-    def __init__(self, name_of_variable, type_of_variable, size=None, namespace = 0):
+    def __init__(self, name_of_variable, type_of_variable, size=None):
         self.name = name_of_variable
         self.typ = type_of_variable
         self.size = size
-        self.namespace = namespace
     def __str__(self):
         return f"Variable {self.name} of type {self.typ}"
+
+class name_space:
+    def __init__(self,consist_of_namespaces,name="None"):
+        self.name = name
+        self.consist_of_namespaces=consist_of_namespaces
+        self.variables = self.get_prev_variables()
+    def get_prev_variables(self):
+        if self.consist_of_namespaces:
+            return copy(self.consist_of_namespaces[-1].variables)
+        else: 
+            return dict()
 
 class MyListener(MY_LANGListener):
     def __init__(self):
         self.stack = []
-        self.global_variables = dict() # {"Name" %21: Value}
-        self.local_variables = dict() # {"Local_Name": Value}
-        self.functions = []
+        self.current_namespace=name_space([],"global")
         self.n = 1
         self.gen = LLVMGenerator()
-        self.current_namespace = 0 # 0-global
-        self.namespaces = [0]
 
     def print_stack(self):
         for ele in self.stack:
             print(ele)
 
     def print_variables(self):
-        for ele in self.global_variables:
-            print(ele)
-            print(self.global_variables[ele])
-
+        for var in self.current_namespace.variables:
+            print(self.current_namespace.variables[var])
+        print(self.current_namespace.variables.keys())
     def exitProg(self, ctx):
         self.print_variables()
+        pass
     
+    def exitStatements(self, ctx):
+        self.gen.clear_buffer()
 
     def exitFunction_header(self, ctx):
         if ctx.ID().getText() in ["PRINT","READ","BEGIN","END","illegal"]:
             raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()} ")
         else:
             types=[]
+            types_name=[]
             names=[]
             ctx_arg_list = ctx.arg_list()
             for typ in ctx_arg_list.typ():
+                types_name.append(typ.getText())
                 if typ.getText() =="INT":
                     types.append("i32")
                 elif typ.getText() =="REAL":
@@ -75,68 +85,68 @@ class MyListener(MY_LANGListener):
                 names.append(name.getText())
             args=""
             for i in range(len(names)):
+                self.current_namespace.variables[names[i]]=Value(f'%{names[i]}',types_name[i])
                 args+=types[i]+ " %" + names[i] + ',' 
             self.gen.function_start(ctx.ID().getText(),args)
 
-
-    def exitStatements(self, ctx):
-        self.gen.clear_buffer()
-
     def enterDefine(self,ctx):
-        this_namespace = max(self.namespaces)
-        self.current_namespace = this_namespace+1
-        self.namespaces.append(this_namespace+1)
-        self.gen.clear_buffer()
+        prev_namespace=copy(self.current_namespace)
+        prev_namespace.consist_of_namespaces.append(prev_namespace)
+        self.current_namespace=name_space(prev_namespace.consist_of_namespaces)
+        print(self.current_namespace.consist_of_namespaces)
+        pass
 
     def exitDefine(self, ctx):
-        self.current_namespace = 0
         ctx = ctx.end_function()
         ID = ctx.ID().getText()
 
-        if ID in self.local_variables.keys():
-            my_name = self.local_variables[ID].name
-        elif ID in self.global_variables.keys():
-            my_name =f"%{self.n}"
-            if self.global_variables[ID].typ == "INT":
-                self.gen.load_int(self.n,self.global_variables[ID].name)
-            elif self.global_variables[ID].typ == "REAL":
-                self.gen.load_real(self.n,self.global_variables[ID].name)
+        if ID in self.current_namespace.variables.keys():
+            my_name = self.current_namespace.variables[ID].name
+            if self.current_namespace.variables[ID].typ == "INT":
+                self.gen.load_int(self.n,self.current_namespace.variables[ID].name)
+            elif self.current_namespace.variables[ID].typ == "REAL":
+                self.gen.load_real(self.n,self.current_namespace.variables[ID].name)
         else :
             raise MY_LANG_Undefined_Exception(f"variable {ID} undefined")
         
         self.gen.function_end(my_name)
         self.n=1
-        self.current_namespace = 0
-
+        self.print_variables()
+        self.current_namespace=self.current_namespace.consist_of_namespaces[-1]
+        
     def exitAssign(self, ctx):
         v = self.stack.pop()
         if ctx.ID():
             var_name = ctx.ID().getText()
             if v.typ=="INT":
-                if var_name in self.global_variables.keys():
-                    name = self.global_variables[var_name].name    
+                if var_name in self.current_namespace.variables:
+                    name = self.current_namespace.variables[var_name].name    
                     self.gen.asign_i32(name,v.name)
                 else: 
-                    if self.current_namespace==0:
-                        self.global_variables[var_name]=Value(f"@{var_name}","INT")
+                    if self.current_namespace.name=="global":
+                        self.current_namespace.variables[var_name]=Value(f"@{var_name}","INT")
                         self.gen.global_var(f"@{var_name}","i32", 0)
                         self.gen.asign_i32(f"@{var_name}",v.name)
-                        print("ale")
                     else: 
-                        self.global_variables[var_name]=Value(f"%{self.n}","INT")
+                        self.current_namespace.variables[var_name]=Value(f"%{self.n}","INT")
                         self.gen.alloca(f"%{self.n}","i32")
                         self.gen.asign_i32(f"%{self.n}",v.name)
                         self.n+=1
 
             elif v.typ == "REAL":
-                if var_name in self.global_variables.keys():
-                    name = self.global_variables[var_name].name    
+                if var_name in self.current_namespace.variables:
+                    name = self.current_namespace.variables[var_name].name        
                     self.gen.asign_float(name,v.name)
                 else:
-                    self.global_variables[var_name] = Value(f"%{self.n}", "REAL")
-                    self.gen.alloca(f"%{self.n}", "float")
-                    self.gen.asign_float(f"%{self.n}", v.name)
-                    self.n+=1
+                    if self.current_namespace.name=="global":
+                        self.current_namespace.variables[var_name] = Value(f"@{var_name}", "REAL")
+                        self.gen.global_var(f"@{var_name}", "float", 0.00)
+                        self.gen.asign_float(f"@{var_name}", v.name)
+                    else:
+                        self.current_namespace.variables[var_name] = Value(f"%{self.n}", "REAL")
+                        self.gen.alloca(f"%{self.n}", "float")
+                        self.gen.asign_float(f"%{self.n}", v.name)
+                        self.n+=1
 
     def exitPrint(self, ctx):
         v = self.stack.pop()
@@ -148,10 +158,10 @@ class MyListener(MY_LANGListener):
 
     def exitRead(self, ctx):
         var_name = ctx.ID().getText()
-        id=self.global_variables[var_name].name
-        if self.global_variables[var_name].typ == "INT":
+        id = self.current_namespace.variables[var_name].name
+        if self.current_namespace.variables[var_name].typ == "INT":
             self.gen.scanf_i32(id,self.n)
-        elif self.global_variables[var_name].typ == "REAL":
+        elif self.current_namespace.variables[var_name].typ == "REAL":
             self.gen.scanf_float(id,self.n)
 
     def exitExpr(self, ctx):
@@ -162,14 +172,13 @@ class MyListener(MY_LANGListener):
             self.stack.append(Value(ctx.REAL().getText()+"0","REAL"))
 
         elif ctx.ID():
-            if ctx.ID().getText() in self.global_variables.keys():
-                if self.global_variables[ctx.ID().getText()].typ=="INT":
-                    self.gen.load_int(self.n,self.global_variables[ctx.ID().getText()].name)
-                elif self.global_variables[ctx.ID().getText()].typ=="REAL":
-                    self.gen.load_real(self.n,self.global_variables[ctx.ID().getText()].name)
-                self.stack.append(Value(f"%{self.n}",self.global_variables[ctx.ID().getText()].typ))
+            if ctx.ID().getText() in self.current_namespace.variables.keys():
+                if self.current_namespace.variables[ctx.ID().getText()].typ=="INT":
+                    self.gen.load_int(self.n,self.current_namespace.variables[ctx.ID().getText()].name)
+                elif self.current_namespace.variables[ctx.ID().getText()].typ=="REAL":
+                    self.gen.load_real(self.n,self.current_namespace.variables[ctx.ID().getText()].name)
+                self.stack.append(Value(f"%{self.n}",self.current_namespace.variables[ctx.ID().getText()].typ))
                 self.n+=1
-
         elif ctx.ADD():
             v1 = self.stack.pop()
             v2 = self.stack.pop()

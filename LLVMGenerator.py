@@ -79,8 +79,8 @@ class LLVMGenerator():
     def load_real(self,placeholder,id):
         self.buffer += f"%{placeholder}= load float, float* {id}\n"
 
-    def function_start(self,id):
-        self.buffer = "define i32 @"+id+"() nounwind {\n"
+    def function_start(self,id,args):
+        self.buffer = f"define i32 @{id}({args}) nounwind "+"{ \n"
 
     def function_end(self,id):
         self.buffer += f"ret i32 {id}\n"; 

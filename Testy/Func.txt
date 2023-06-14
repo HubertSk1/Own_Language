@@ -1,11 +1,6 @@
-b=4;
 DEFINE  illegdsaal(INT a,REAL b)
     BEGIN
     a=2;
     RETURN b
 
-DEFINE  oppa(INT a,REAL b)
-    BEGIN
-    a=2;
-    RETURN b
 
