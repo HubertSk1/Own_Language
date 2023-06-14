@@ -1,6 +1,4 @@
-DEFINE  illegdsaal(INT a,REAL b)
+DEFINE  illegdsaal(INT a)
     BEGIN
-    a=2;
-    RETURN b
-
-
+    b=10;
+    RETURN a 

@@ -49,7 +49,7 @@ class MyListener(MY_LANGListener):
         self.current_namespace=name_space([],"global")
         self.n = 1
         self.gen = LLVMGenerator()
-
+        self.functions=[]
     def print_stack(self):
         for ele in self.stack:
             print(ele)
@@ -58,17 +58,17 @@ class MyListener(MY_LANGListener):
         for var in self.current_namespace.variables:
             print(self.current_namespace.variables[var])
         print(self.current_namespace.variables.keys())
+
     def exitProg(self, ctx):
         self.print_variables()
+        print(self.functions)
         pass
     
     def exitStatements(self, ctx):
         self.gen.clear_buffer()
 
     def exitFunction_header(self, ctx):
-        if ctx.ID().getText() in ["PRINT","READ","BEGIN","END","illegal"]:
-            raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()} ")
-        else:
+        if ctx.ID().getText() not in self.functions:
             types=[]
             types_name=[]
             names=[]
@@ -85,18 +85,27 @@ class MyListener(MY_LANGListener):
                 names.append(name.getText())
             args=""
             for i in range(len(names)):
-                self.current_namespace.variables[names[i]]=Value(f'%{names[i]}',types_name[i])
                 args+=types[i]+ " %" + names[i] + ',' 
+            args=args[0:-1]
             self.gen.function_start(ctx.ID().getText(),args)
+            for i in range(len(names)):
+                self.gen.alloca(f"%{self.n}", types[i])
+                self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
+                self.current_namespace.variables[names[i]]=Value(f'%{self.n}',types_name[i])
+                self.n+=1
+            self.functions.append(ctx.ID().getText())
+        else:
+            raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()}")
 
     def enterDefine(self,ctx):
         prev_namespace=copy(self.current_namespace)
         prev_namespace.consist_of_namespaces.append(prev_namespace)
         self.current_namespace=name_space(prev_namespace.consist_of_namespaces)
-        print(self.current_namespace.consist_of_namespaces)
+        self.n=1
         pass
 
     def exitDefine(self, ctx):
+        print("secend")
         ctx = ctx.end_function()
         ID = ctx.ID().getText()
 
@@ -109,7 +118,7 @@ class MyListener(MY_LANGListener):
         else :
             raise MY_LANG_Undefined_Exception(f"variable {ID} undefined")
         
-        self.gen.function_end(my_name)
+        self.gen.function_end(f"{self.n}")
         self.n=1
         self.print_variables()
         self.current_namespace=self.current_namespace.consist_of_namespaces[-1]

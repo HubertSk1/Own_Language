@@ -12,11 +12,11 @@ print : PRINT LEFT_P expr RIGHT_P ;
 
 read : READ LEFT_P ID RIGHT_P;
 
-arg_list : typ ID (COMA typ ID);
+arg_list : typ ID (COMA typ ID)*;
 
 function_header : DEF ID LEFT_P  arg_list RIGHT_P;
 
-define : function_header BEGIN statement end_function;
+define : function_header BEGIN statement* end_function;
 
 end_function : RETURN ID;
 
