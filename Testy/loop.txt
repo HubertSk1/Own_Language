@@ -1,4 +1,9 @@
+a=10.;
 REPEAT 10 BEGIN     
-    a=3;
+    IF 2==2 DO 
+        a=4;
+        ELSE DO 
+        b=4;
+    END;
 END;
-PRINT(a)
+PRINT(b);

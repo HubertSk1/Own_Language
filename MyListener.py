@@ -46,7 +46,6 @@ class fun:
     def __init__(self,name,types):
         self.name = name
         self.types = types
-
     
 class MyListener(MY_LANGListener):
     def __init__(self):
@@ -96,9 +95,9 @@ class MyListener(MY_LANGListener):
             self.gen.function_start(ctx.ID().getText(),args)
             for i in range(len(names)):
                 self.gen.alloca(f"%{self.n}", types[i])
-                if types[i]=="INT":
+                if types[i]=="i32":
                     self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
-                elif types[i]=="REAL":
+                elif types[i]=="float":
                     self.gen.asign_float(f"%{self.n}",f"%{names[i]}")
                 self.current_namespace.variables[names[i]]=Value(f'%{self.n}',types_name[i])
                 self.n+=1
@@ -126,7 +125,7 @@ class MyListener(MY_LANGListener):
         else :
             raise MY_LANG_Undefined_Exception(f"variable {ID} undefined")
         
-        self.gen.function_end(f"{self.n}")
+        self.gen.function_end(f"%{self.n}")
         self.n=1
         self.current_namespace=self.current_namespace.consist_of_namespaces[-1]
         
@@ -137,8 +136,6 @@ class MyListener(MY_LANGListener):
             self.stack.reverse()
             for i in range (0,len(ctx.expr())):
                 var=self.stack.pop()
-                print(var.typ)
-                print(types_of_vars[i])
                 if var.typ != types_of_vars[i]:
                     raise MY_LANG_Not_Supported_Arguments_type("Wrong types for function")
                 if var.typ =="INT":
@@ -233,7 +230,7 @@ class MyListener(MY_LANGListener):
     def exitLoop(self,ctx):
         self.block_stack.pop()
         self.current_namespace=self.current_namespace.consist_of_namespaces[-1]
-        
+
     def exitLoop_header(self,ctx):
         rep=self.stack.pop()
         if rep.typ != "INT":

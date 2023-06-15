@@ -3,6 +3,3 @@ DEFINE aal(INT a,REAL b)
     b=10;
     RETURN a 
 
-a=2;
-CALL aal(a,10.0)
-b=32
