@@ -42,14 +42,18 @@ class name_space:
             return copy(self.consist_of_namespaces[-1].variables)
         else: 
             return dict()
-
+class fun:
+    def __init__(self,name,types):
+        self.name = name
+        self.types = types
+    
 class MyListener(MY_LANGListener):
     def __init__(self):
         self.stack = []
         self.current_namespace=name_space([],"global")
         self.n = 1
         self.gen = LLVMGenerator()
-        self.functions=[]
+        self.functions=dict()
     def print_stack(self):
         for ele in self.stack:
             print(ele)
@@ -60,15 +64,13 @@ class MyListener(MY_LANGListener):
         print(self.current_namespace.variables.keys())
 
     def exitProg(self, ctx):
-        self.print_variables()
-        print(self.functions)
         pass
     
     def exitStatements(self, ctx):
         self.gen.clear_buffer()
 
     def exitFunction_header(self, ctx):
-        if ctx.ID().getText() not in self.functions:
+        if ctx.ID().getText() not in self.functions.keys():
             types=[]
             types_name=[]
             names=[]
@@ -93,7 +95,7 @@ class MyListener(MY_LANGListener):
                 self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
                 self.current_namespace.variables[names[i]]=Value(f'%{self.n}',types_name[i])
                 self.n+=1
-            self.functions.append(ctx.ID().getText())
+            self.functions[ctx.ID().getText()]=fun(ctx.ID().getText(),types_name)
         else:
             raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()}")
 
@@ -105,23 +107,41 @@ class MyListener(MY_LANGListener):
         pass
 
     def exitDefine(self, ctx):
-        print("secend")
         ctx = ctx.end_function()
         ID = ctx.ID().getText()
 
         if ID in self.current_namespace.variables.keys():
             my_name = self.current_namespace.variables[ID].name
             if self.current_namespace.variables[ID].typ == "INT":
-                self.gen.load_int(self.n,self.current_namespace.variables[ID].name)
+                self.gen.load_int(self.n,my_name)
             elif self.current_namespace.variables[ID].typ == "REAL":
-                self.gen.load_real(self.n,self.current_namespace.variables[ID].name)
+                self.gen.load_real(self.n,my_name)
         else :
             raise MY_LANG_Undefined_Exception(f"variable {ID} undefined")
         
         self.gen.function_end(f"{self.n}")
         self.n=1
-        self.print_variables()
         self.current_namespace=self.current_namespace.consist_of_namespaces[-1]
+        
+    def exitCall_function(self, ctx):
+        if ctx.ID().getText() in self.functions.keys():
+            types_of_vars = self.functions[ctx.ID().getText()].types
+            types_of_vars.reverse
+            for i in range (0,len(ctx.expr())):
+                print(types_of_vars[i])
+                var=self.stack.pop()
+                print(var.typ)
+                if var.typ != types_of_vars[i]:
+                    raise MY_LANG_Not_Supported_Arguments_type("Wrong types for function")
+                
+            # for ctx_of_arg in ctx.expr():
+                
+
+
+        else:
+            raise MY_LANG_Undefined_Exception("function undefined")
+        
+
         
     def exitAssign(self, ctx):
         v = self.stack.pop()
@@ -188,6 +208,9 @@ class MyListener(MY_LANGListener):
                     self.gen.load_real(self.n,self.current_namespace.variables[ctx.ID().getText()].name)
                 self.stack.append(Value(f"%{self.n}",self.current_namespace.variables[ctx.ID().getText()].typ))
                 self.n+=1
+            else :
+                raise MY_LANG_Undefined_Exception(f"Variable {ctx.ID().getText()} is undefinded in this scope")
+
         elif ctx.ADD():
             v1 = self.stack.pop()
             v2 = self.stack.pop()

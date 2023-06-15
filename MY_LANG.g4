@@ -4,7 +4,7 @@ prog: statements EOF ;
 
 statements: (statement|define)* ;
 
-statement: (print | assign | read ) EOE ;
+statement: (print | assign | read | call_function ) EOE ;
 
 assign: ID SET expr ;
 
@@ -17,6 +17,10 @@ arg_list : typ ID (COMA typ ID)*;
 function_header : DEF ID LEFT_P  arg_list RIGHT_P;
 
 define : function_header BEGIN statement* end_function;
+
+call_function: CALL ID LEFT_P expr? (COMA expr)* RIGHT_P ;
+
+loop : REPEAT INT BEGIN statement* END;
 
 end_function : RETURN ID;
 
@@ -31,8 +35,11 @@ expr: expr MUL expr
     | ID 
     | LEFT_P expr RIGHT_P;
 
+REPEAT: 'REPEAT';
+CALL : 'CALL';
 INT_TYPE : 'INT' ;
 REAL_TYPE : 'REAL';
+END: 'END';
 DEF : 'DEFINE';
 BEGIN : 'BEGIN';
 RETURN : 'RETURN';
@@ -44,6 +51,7 @@ MUL : '*' ;
 DIV : '/' ;
 ADD : '+' ;
 SUB : '-' ;
+EQUAL: '==';
 SET : '=' ;
 EOE : ';' ;
 COMA: ',' ;

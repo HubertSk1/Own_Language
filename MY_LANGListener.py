@@ -89,6 +89,24 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#call_function.
+    def enterCall_function(self, ctx:MY_LANGParser.Call_functionContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#call_function.
+    def exitCall_function(self, ctx:MY_LANGParser.Call_functionContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#loop.
+    def enterLoop(self, ctx:MY_LANGParser.LoopContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#loop.
+    def exitLoop(self, ctx:MY_LANGParser.LoopContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#end_function.
     def enterEnd_function(self, ctx:MY_LANGParser.End_functionContext):
         pass

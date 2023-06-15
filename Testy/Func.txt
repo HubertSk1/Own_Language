@@ -1,4 +1,7 @@
-DEFINE  illegdsaal(INT a)
+DEFINE  aal(INT a,INT b)
     BEGIN
     b=10;
     RETURN a 
+
+a=2;
+CALL aal(a,10)
