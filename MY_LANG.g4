@@ -29,6 +29,10 @@ loop_end : END;
 
 struct: STRUCT ID LEFT_P arg_list RIGHT_P; 
 
+create_structure: ID LEFT_P expr (COMA expr)* RIGHT_P;
+
+part_structure: ID DOT ID;
+
 conditional_stat:conditional_header  statement* else_part statement* END;
 
 conditional_header: IF bool_stat DO;
@@ -42,6 +46,8 @@ bool_stat:  expr GREATER expr|
 
 typ: INT_TYPE | REAL_TYPE;
 
+
+
 expr: expr MUL expr 
     | expr DIV expr 
     | expr ADD expr 
@@ -50,7 +56,9 @@ expr: expr MUL expr
     | REAL 
     | ID 
     | LEFT_P expr RIGHT_P
-    | call_function;
+    | call_function
+    | create_structure
+    | part_structure;
 
 
 STRUCT: 'STRUCT';
@@ -71,6 +79,7 @@ INT : '-'?[0-9]+ ;
 REAL : '-'?[0-9]+'.'[0-9]* ;
 GREATER : '>';
 LOWER : '<';
+DOT : '.';
 MUL : '*' ;
 DIV : '/' ;
 ADD : '+' ;

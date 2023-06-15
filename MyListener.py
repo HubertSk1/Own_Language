@@ -74,6 +74,7 @@ class MyListener(MY_LANGListener):
         print(self.current_namespace.variables.keys())
 
     def exitProg(self, ctx):
+        self.print_variables()
         pass
     
     def exitStatements(self, ctx):
@@ -193,7 +194,6 @@ class MyListener(MY_LANGListener):
                         self.gen.alloca(f"%{self.n}","i32")
                         self.gen.asign_i32(f"%{self.n}",v.name)
                         self.n+=1
-
             elif v.typ == "REAL":
                 if var_name in self.current_namespace.variables:
                     name = self.current_namespace.variables[var_name].name        
@@ -208,6 +208,15 @@ class MyListener(MY_LANGListener):
                         self.gen.alloca(f"%{self.n}", "float")
                         self.gen.asign_float(f"%{self.n}", v.name)
                         self.n+=1
+            elif v.typ in self.structures.keys():
+                    types=["i32" if x =="INT" else "float" for x in self.structures[v.typ].types ]
+                    self.gen.alloca(f"%{self.n}",f"%{v.typ}")
+                    self.stack.reverse()
+                    for i in range(len(types)):
+                        value_of_field=self.stack.pop()
+                        self.gen.put_value_to_structure(self.n,self.structures[v.typ].fields[i],v.typ,i,value_of_field.name,types[i],f"%{self.n}")
+                    self.current_namespace.variables[ctx.ID().getText()]=Value(f"%{self.n}",f"{v.typ}")
+                    self.n+=1
 
     def exitPrint(self, ctx):
         v = self.stack.pop()
@@ -313,8 +322,36 @@ class MyListener(MY_LANGListener):
 
         elif ctx.REAL():
             self.stack.append(Value(ctx.REAL().getText()+"0","REAL"))
+
         elif ctx.call_function():
             self.stack.append(Value(f"%{self.n}","INT"))
+
+        elif ctx.create_structure():
+            if ctx.create_structure().ID().getText() in self.structures.keys():
+                self.stack.append(Value(f"%{self.n}",f"{ctx.create_structure().ID().getText()}"))
+        
+        elif ctx.part_structure():
+            ID1 = ctx.part_structure().ID()[0].getText()
+            ID2 = ctx.part_structure().ID()[1].getText()
+            if ID1 in self.current_namespace.variables.keys():
+                this_structure = self.current_namespace.variables[ID1]
+                fields = self.structures[this_structure.typ].fields
+                types = self.structures[this_structure.typ].types
+                err=1
+                for index,field in enumerate(fields):
+                    if field == ID2:
+                        self.gen.get_structure_element(self.n,self.structures[this_structure.typ].name,index)
+                        self.stack.append(Value(f"%{self.n}",types[index]))
+                        self.n+=1
+                        err=0
+                if err==1:
+                    raise MY_LANG_Undefined_Exception("wrong field for structure")
+                
+            else :
+                raise MY_LANG_Undefined_Exception("this structure is undefined in this scope")
+
+
+
         elif ctx.ID():
             if ctx.ID().getText() in self.current_namespace.variables.keys():
                 if self.current_namespace.variables[ctx.ID().getText()].typ=="INT":
@@ -324,7 +361,7 @@ class MyListener(MY_LANGListener):
                 self.stack.append(Value(f"%{self.n}",self.current_namespace.variables[ctx.ID().getText()].typ))
                 self.n+=1
             else :
-                raise MY_LANG_Undefined_Exception(f"Variable {ctx.ID().getText()} is undefinded in this scope")
+                raise MY_LANG_Undefined_Exception(f"Variable {ctx.ID().getText()} is undefinded in this scope (or is a structure)")
 
         elif ctx.ADD():
             v1 = self.stack.pop()

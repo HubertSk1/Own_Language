@@ -13,7 +13,7 @@ import subprocess
 def main():
 
     # Open input file
-    with open("Testy/Func.txt", "r") as file:
+    with open("Testy/Structure.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 

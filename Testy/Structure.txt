@@ -3,3 +3,6 @@ INT point_x,
 INT point_y,
 REAL r
 )
+a = circle(10,20,10.);
+
+b= a.b;

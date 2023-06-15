@@ -143,6 +143,24 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#create_structure.
+    def enterCreate_structure(self, ctx:MY_LANGParser.Create_structureContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#create_structure.
+    def exitCreate_structure(self, ctx:MY_LANGParser.Create_structureContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#part_structure.
+    def enterPart_structure(self, ctx:MY_LANGParser.Part_structureContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#part_structure.
+    def exitPart_structure(self, ctx:MY_LANGParser.Part_structureContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#conditional_stat.
     def enterConditional_stat(self, ctx:MY_LANGParser.Conditional_statContext):
         pass
