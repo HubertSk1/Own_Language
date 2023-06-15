@@ -3,3 +3,4 @@ DEFINE aal(INT a,REAL b)
     b=10;
     RETURN a 
 
+b = CALL aal(10,10.)

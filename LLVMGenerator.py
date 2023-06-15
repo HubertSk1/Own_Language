@@ -108,5 +108,8 @@ class LLVMGenerator():
     def create_label(self,label,number):
         self.buffer+=f"{label}{number}:\n"
 
+    def create_structure(self,name,args):
+        self.header_text+=f"%{name} = type"+"{\n"f"{args}"+"}\n"
+        
     def clear_buffer(self):
         self.main_text+=self.buffer

@@ -134,6 +134,15 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#struct.
+    def enterStruct(self, ctx:MY_LANGParser.StructContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#struct.
+    def exitStruct(self, ctx:MY_LANGParser.StructContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#conditional_stat.
     def enterConditional_stat(self, ctx:MY_LANGParser.Conditional_statContext):
         pass

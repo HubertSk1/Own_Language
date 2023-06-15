@@ -42,11 +42,17 @@ class name_space:
             return copy(self.consist_of_namespaces[-1].variables)
         else: 
             return dict()
+
 class fun:
     def __init__(self,name,types):
         self.name = name
         self.types = types
-    
+class structure:
+    def __init__(self,name,fields,types):
+        self.name=name
+        self.fields=fields
+        self.types=types
+
 class MyListener(MY_LANGListener):
     def __init__(self):
         self.stack = []
@@ -56,6 +62,7 @@ class MyListener(MY_LANGListener):
         self.functions=dict()
         self.blocknumber=0
         self.block_stack=[]
+        self.structures=dict()
 
     def print_stack(self):
         for ele in self.stack:
@@ -256,7 +263,27 @@ class MyListener(MY_LANGListener):
         self.gen.loop_jump(self.block_stack[-1])
         self.gen.create_label("end",self.block_stack[-1])
 
+    def exitStruct(self,ctx):
+        text=""
+        types=[]
+        names=[]
+        for t in ctx.arg_list().typ():
+            if t.getText()=="INT":
+                types.append("INT")
+                text+=f"i32,\n"
+            elif t.getText()=="REAL":
+                types.append("REAL")
+                text+=f"float,\n"
+            else:
+                raise MY_LANG_Not_Supported_Arguments_type("STRUCT only support REAL and INT for now")
+        text=text[0:-2]
+        for t in ctx.arg_list().ID():
+            names.append(t.getText())
         
+        self.gen.create_structure(ctx.ID().getText(),text)
+        self.structures[ctx.ID().getText()]=structure(f"%{ctx.ID().getText()}",names,types)
+
+
 
     def exitBool_stat(self, ctx):
         var1=self.stack.pop()
@@ -286,7 +313,8 @@ class MyListener(MY_LANGListener):
 
         elif ctx.REAL():
             self.stack.append(Value(ctx.REAL().getText()+"0","REAL"))
-
+        elif ctx.call_function():
+            self.stack.append(Value(f"%{self.n}","INT"))
         elif ctx.ID():
             if ctx.ID().getText() in self.current_namespace.variables.keys():
                 if self.current_namespace.variables[ctx.ID().getText()].typ=="INT":

@@ -1,0 +1,5 @@
+STRUCT circle(
+INT point_x,
+INT point_y,
+REAL r
+)

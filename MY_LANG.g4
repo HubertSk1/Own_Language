@@ -2,7 +2,7 @@ grammar MY_LANG;
 
 prog: statements EOF ;
 
-statements: (statement|define)* ;
+statements: (statement|define|struct)* ;
 
 statement: (print | assign | read | call_function |conditional_stat |loop ) EOE ;
 
@@ -27,6 +27,7 @@ loop_header : REPEAT expr BEGIN;
 
 loop_end : END;
 
+struct: STRUCT ID LEFT_P arg_list RIGHT_P; 
 
 conditional_stat:conditional_header  statement* else_part statement* END;
 
@@ -48,8 +49,11 @@ expr: expr MUL expr
     | INT 
     | REAL 
     | ID 
-    | LEFT_P expr RIGHT_P;
+    | LEFT_P expr RIGHT_P
+    | call_function;
 
+
+STRUCT: 'STRUCT';
 IF: 'IF';
 DO: 'DO';
 ELSE : 'ELSE';
