@@ -4,7 +4,7 @@ prog: statements EOF ;
 
 statements: (statement|define)* ;
 
-statement: (print | assign | read | call_function ) EOE ;
+statement: (print | assign | read | call_function |conditional_stat ) EOE ;
 
 assign: ID SET expr ;
 
@@ -22,6 +22,19 @@ call_function: CALL ID LEFT_P expr? (COMA expr)* RIGHT_P ;
 
 loop : REPEAT INT BEGIN statement* END;
 
+
+conditional_stat:conditional_header  statement* else_part statement* END;
+
+else_part: ELSE DO;
+
+conditional_header: IF bool_stat DO;
+
+
+
+bool_stat:  expr GREATER expr|
+            expr LOWER expr|
+            expr EQUAL expr ;
+
 end_function : RETURN ID;
 
 typ: INT_TYPE | REAL_TYPE;
@@ -35,6 +48,9 @@ expr: expr MUL expr
     | ID 
     | LEFT_P expr RIGHT_P;
 
+IF: 'IF';
+DO: 'DO';
+ELSE : 'ELSE';
 REPEAT: 'REPEAT';
 CALL : 'CALL';
 INT_TYPE : 'INT' ;
@@ -47,6 +63,8 @@ PRINT : 'PRINT';
 READ : 'READ';
 INT : '-'?[0-9]+ ;
 REAL : '-'?[0-9]+'.'[0-9]* ;
+GREATER : '>';
+LOWER : '<';
 MUL : '*' ;
 DIV : '/' ;
 ADD : '+' ;

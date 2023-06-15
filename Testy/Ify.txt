@@ -1,0 +1,4 @@
+DEFINE aal(INT a,REAL b)
+    BEGIN
+    IF 2>2 DO a=2; ELSE DO a=3; END;
+    RETURN a 

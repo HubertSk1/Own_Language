@@ -107,6 +107,42 @@ class MY_LANGListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MY_LANGParser#conditional_stat.
+    def enterConditional_stat(self, ctx:MY_LANGParser.Conditional_statContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#conditional_stat.
+    def exitConditional_stat(self, ctx:MY_LANGParser.Conditional_statContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#else_part.
+    def enterElse_part(self, ctx:MY_LANGParser.Else_partContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#else_part.
+    def exitElse_part(self, ctx:MY_LANGParser.Else_partContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#conditional_header.
+    def enterConditional_header(self, ctx:MY_LANGParser.Conditional_headerContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#conditional_header.
+    def exitConditional_header(self, ctx:MY_LANGParser.Conditional_headerContext):
+        pass
+
+
+    # Enter a parse tree produced by MY_LANGParser#bool_stat.
+    def enterBool_stat(self, ctx:MY_LANGParser.Bool_statContext):
+        pass
+
+    # Exit a parse tree produced by MY_LANGParser#bool_stat.
+    def exitBool_stat(self, ctx:MY_LANGParser.Bool_statContext):
+        pass
+
+
     # Enter a parse tree produced by MY_LANGParser#end_function.
     def enterEnd_function(self, ctx:MY_LANGParser.End_functionContext):
         pass

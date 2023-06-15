@@ -11,6 +11,8 @@ class LLVMGenerator():
         text = ''
         text += "declare i32 @printf(i8*, ...)\n"
         text += "declare i32 @__isoc99_scanf(i8*, ...)\n"
+        text += "@print_f = private unnamed_addr constant [4 x i8] c\"%f\\0A\\00\", align 1\n"
+        text += "@scan_f = private unnamed_addr constant [3 x i8] c\"%f\\00\", align 1\n"
         text += "@.stri = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\", align 1\n"
         text += "@.strd = private unnamed_addr constant [4 x i8] c\"%f\\0A\\00\", align 1\n"
         text += "@.strlf = private unnamed_addr constant [4 x i8] c\"%lf\\00\", align 1\n"
@@ -54,7 +56,6 @@ class LLVMGenerator():
     def printf_float(self, id, placeholder):
         self.buffer += f"call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strd, i32 0, i32 0), float {id})\n"
         
-        
     def scanf_i32(self, id,placeholder):
         self.buffer += f"%{placeholder} = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.stri, i32 0, i32 0), i32* {id})\n"
  
@@ -82,6 +83,12 @@ class LLVMGenerator():
     def function_start(self,id,args):
         self.buffer = f"define i32 @{id}({args}) nounwind "+"{ \n"
 
+    def compare(self,id,type,operation,a,b):
+        self.buffer+=f"{id} =icmp {operation} {type} {a},{b}\n"
+
+    def cond_jump(self,number):
+        self.buffer+=f"br i1 %cmp{number}, label %iftrue{number}, label %iffalse{number}\n"
+
     def function_end(self,id):
         self.buffer += f"ret i32 {id}\n"; 
         self.buffer += "}\n"
@@ -93,6 +100,10 @@ class LLVMGenerator():
 
     def call_fun(self,n,name,args):
         self.buffer+=f"%{n} = call i32 {name}({args})\n"
+    def jump_to_label(self,label):
+        self.buffer+=f"br label {label}\n"
+    def create_label(self,label,number):
+        self.buffer+=f"{label}{number}:\n"
 
     def clear_buffer(self):
         self.main_text+=self.buffer

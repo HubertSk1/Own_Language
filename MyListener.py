@@ -55,6 +55,7 @@ class MyListener(MY_LANGListener):
         self.n = 1
         self.gen = LLVMGenerator()
         self.functions=dict()
+        self.blocknumber=1
     def print_stack(self):
         for ele in self.stack:
             print(ele)
@@ -149,8 +150,19 @@ class MyListener(MY_LANGListener):
         else:
             raise MY_LANG_Undefined_Exception("function undefined")
         
+    def exitConditional_header(self,ctx):
+        self.gen.cond_jump(self.blocknumber)
+        self.gen.create_label("iftrue",self.blocknumber)
+    def enterElse_part(self,ctx):
+        self.gen.jump_to_label(f"%end{self.blocknumber}")
+    def exitElse_part(self,ctx):
+        self.gen.create_label("iffalse",self.blocknumber)
+    
+    def exitConditional_stat(self, ctx):
+        self.gen.jump_to_label(f"%end{self.blocknumber}")
+        self.gen.create_label("end",self.blocknumber)
+        self.blocknumber+=1
 
-        
     def exitAssign(self, ctx):
         v = self.stack.pop()
         if ctx.ID():
@@ -201,6 +213,28 @@ class MyListener(MY_LANGListener):
         elif self.current_namespace.variables[var_name].typ == "REAL":
             self.gen.scanf_float(id,self.n)
 
+    def exitBool_stat(self, ctx):
+        var1=self.stack.pop()
+        var2=self.stack.pop()
+        if var1.typ != var2.typ:
+            raise MY_LANG_Not_Supported_Arguments_type("Types to be  compared must be the same")
+        if var1.typ not in ["REAL","INT"]:
+            raise MY_LANG_Not_Supported_Arguments_type("Comparison only of REAL and INT is possible")
+        typ = ""
+        if var1.typ =="REAL":
+            typ="float"
+        elif var1.typ =="INT":
+            typ="i32"
+        operation=""
+        self.stack.append(Value(f"%cmp{self.blocknumber}","BOOL"))
+        if ctx.GREATER():
+            operation="sgt"
+        elif ctx.LOWER():
+            operation="slt"
+        elif ctx.EQUAL():
+            operation="eq"
+        self.gen.compare(f"%cmp{self.blocknumber}",typ,operation,var1.name,var2.name)
+        
     def exitExpr(self, ctx):
         if ctx.INT():
             self.stack.append(Value(ctx.INT().getText(),"INT"))
