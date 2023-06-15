@@ -4,7 +4,7 @@ prog: statements EOF ;
 
 statements: (statement|define)* ;
 
-statement: (print | assign | read | call_function |conditional_stat ) EOE ;
+statement: (print | assign | read | call_function |conditional_stat |loop ) EOE ;
 
 assign: ID SET expr ;
 
@@ -17,25 +17,27 @@ arg_list : typ ID (COMA typ ID)*;
 function_header : DEF ID LEFT_P  arg_list RIGHT_P;
 
 define : function_header BEGIN statement* end_function;
+end_function : RETURN ID;
 
 call_function: CALL ID LEFT_P expr? (COMA expr)* RIGHT_P ;
 
-loop : REPEAT INT BEGIN statement* END;
+loop : loop_header statement* loop_end;
+
+loop_header : REPEAT expr BEGIN;
+
+loop_end : END;
 
 
 conditional_stat:conditional_header  statement* else_part statement* END;
 
-else_part: ELSE DO;
-
 conditional_header: IF bool_stat DO;
 
-
+else_part: ELSE DO;
 
 bool_stat:  expr GREATER expr|
             expr LOWER expr|
             expr EQUAL expr ;
 
-end_function : RETURN ID;
 
 typ: INT_TYPE | REAL_TYPE;
 

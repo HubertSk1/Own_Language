@@ -89,6 +89,9 @@ class LLVMGenerator():
     def cond_jump(self,number):
         self.buffer+=f"br i1 %cmp{number}, label %iftrue{number}, label %iffalse{number}\n"
 
+    def loop_jump(self,number):
+        self.buffer+=f"br i1 %cmp{number}, label %end{number}, label %loop{number}\n"
+
     def function_end(self,id):
         self.buffer += f"ret i32 {id}\n"; 
         self.buffer += "}\n"

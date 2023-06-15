@@ -1,0 +1,4 @@
+REPEAT 10 BEGIN     
+    a=3;
+END;
+PRINT(a)

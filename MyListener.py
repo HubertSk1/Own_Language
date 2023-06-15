@@ -55,7 +55,9 @@ class MyListener(MY_LANGListener):
         self.n = 1
         self.gen = LLVMGenerator()
         self.functions=dict()
-        self.blocknumber=1
+        self.blocknumber=0
+        self.block_stack=[]
+
     def print_stack(self):
         for ele in self.stack:
             print(ele)
@@ -150,18 +152,24 @@ class MyListener(MY_LANGListener):
         else:
             raise MY_LANG_Undefined_Exception("function undefined")
         
+    def enterConditional_header(self,ctx):
+        self.blocknumber+=1
+        self.block_stack.append(self.blocknumber)
+
     def exitConditional_header(self,ctx):
-        self.gen.cond_jump(self.blocknumber)
-        self.gen.create_label("iftrue",self.blocknumber)
+        self.gen.cond_jump(self.block_stack[-1])
+        self.gen.create_label("iftrue",self.block_stack[-1])
+
     def enterElse_part(self,ctx):
-        self.gen.jump_to_label(f"%end{self.blocknumber}")
+        self.gen.jump_to_label(f"%end{self.block_stack[-1]}")
+
     def exitElse_part(self,ctx):
-        self.gen.create_label("iffalse",self.blocknumber)
+        self.gen.create_label("iffalse",self.block_stack[-1])
     
     def exitConditional_stat(self, ctx):
-        self.gen.jump_to_label(f"%end{self.blocknumber}")
-        self.gen.create_label("end",self.blocknumber)
-        self.blocknumber+=1
+        self.gen.jump_to_label(f"%end{self.block_stack[-1]}")
+        self.gen.create_label("end",self.block_stack[-1])
+        self.block_stack.pop()
 
     def exitAssign(self, ctx):
         v = self.stack.pop()
@@ -212,6 +220,46 @@ class MyListener(MY_LANGListener):
             self.gen.scanf_i32(id,self.n)
         elif self.current_namespace.variables[var_name].typ == "REAL":
             self.gen.scanf_float(id,self.n)
+
+    def enterLoop_header(self,ctx):
+        self.blocknumber+=1
+        self.block_stack.append(self.blocknumber)
+
+    def enterLoop(self,ctx):
+        prev_namespace=copy(self.current_namespace)
+        prev_namespace.consist_of_namespaces.append(prev_namespace)
+        self.current_namespace=name_space(prev_namespace.consist_of_namespaces)
+
+    def exitLoop(self,ctx):
+        self.block_stack.pop()
+        self.current_namespace=self.current_namespace.consist_of_namespaces[-1]
+        
+    def exitLoop_header(self,ctx):
+        rep=self.stack.pop()
+        if rep.typ != "INT":
+            raise MY_LANG_Not_Supported_Arguments_type("Number of repetitions must be INT type")
+
+        self.gen.alloca(f"%reps{self.block_stack[-1]}","i32")
+        self.gen.asign_i32(f"%reps{self.block_stack[-1]}",rep.name)
+
+        self.gen.alloca(f"%counter{self.block_stack[-1]}","i32")
+        self.gen.asign_i32(f"%counter{self.block_stack[-1]}",0)
+        self.gen.jump_to_label(f"%loop{self.block_stack[-1]}")
+        self.gen.create_label(f"loop",self.block_stack[-1])
+
+        self.gen.load_int(self.n,f"%counter{self.block_stack[-1]}")
+        self.gen.add_i32(f"incrementedcounter{self.block_stack[-1]}",f"%{self.n}",1)
+        self.gen.asign_i32(f"%counter{self.block_stack[-1]}",f"%incrementedcounter{self.block_stack[-1]}")
+        self.n+=1
+
+    def exitLoop_end(self,ctx):
+        self.gen.load_int(f"to_compare{self.block_stack[-1]}",f"%counter{self.block_stack[-1]}")
+        self.gen.load_int(f"to_compare{self.block_stack[-1]}_{self.block_stack[-1]}",f"%reps{self.block_stack[-1]}")
+        self.gen.compare(f"%cmp{self.block_stack[-1]}","i32","eq",f"%to_compare{self.block_stack[-1]}",f"%to_compare{self.block_stack[-1]}_{self.block_stack[-1]}")
+        self.gen.loop_jump(self.block_stack[-1])
+        self.gen.create_label("end",self.block_stack[-1])
+
+        
 
     def exitBool_stat(self, ctx):
         var1=self.stack.pop()
