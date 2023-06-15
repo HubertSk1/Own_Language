@@ -46,6 +46,7 @@ class fun:
     def __init__(self,name,types):
         self.name = name
         self.types = types
+
     
 class MyListener(MY_LANGListener):
     def __init__(self):
@@ -92,7 +93,10 @@ class MyListener(MY_LANGListener):
             self.gen.function_start(ctx.ID().getText(),args)
             for i in range(len(names)):
                 self.gen.alloca(f"%{self.n}", types[i])
-                self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
+                if types[i]=="INT":
+                    self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
+                elif types[i]=="REAL":
+                    self.gen.asign_float(f"%{self.n}",f"%{names[i]}")
                 self.current_namespace.variables[names[i]]=Value(f'%{self.n}',types_name[i])
                 self.n+=1
             self.functions[ctx.ID().getText()]=fun(ctx.ID().getText(),types_name)
@@ -126,18 +130,22 @@ class MyListener(MY_LANGListener):
     def exitCall_function(self, ctx):
         if ctx.ID().getText() in self.functions.keys():
             types_of_vars = self.functions[ctx.ID().getText()].types
-            types_of_vars.reverse
+            txt=""
+            self.stack.reverse()
             for i in range (0,len(ctx.expr())):
-                print(types_of_vars[i])
                 var=self.stack.pop()
                 print(var.typ)
+                print(types_of_vars[i])
                 if var.typ != types_of_vars[i]:
                     raise MY_LANG_Not_Supported_Arguments_type("Wrong types for function")
-                
-            # for ctx_of_arg in ctx.expr():
-                
-
-
+                if var.typ =="INT":
+                    txt+="i32 "
+                if var.typ == "REAL":
+                    txt+="float "
+                txt+= var.name 
+                txt+=','
+            txt=txt[0:-1]
+            self.gen.call_fun(self.n,f"@{ctx.ID().getText()}",txt)
         else:
             raise MY_LANG_Undefined_Exception("function undefined")
         

@@ -1,7 +1,8 @@
-DEFINE  aal(INT a,INT b)
+DEFINE aal(INT a,REAL b)
     BEGIN
     b=10;
     RETURN a 
 
 a=2;
-CALL aal(a,10)
+CALL aal(a,10.0)
+b=32

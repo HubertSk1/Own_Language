@@ -91,6 +91,8 @@ class LLVMGenerator():
     def global_var(self,var_name,typ,def_value):
         self.header_text+=f"{var_name} = global {typ} {def_value}\n"
 
+    def call_fun(self,n,name,args):
+        self.buffer+=f"%{n} = call i32 {name}({args})\n"
+
     def clear_buffer(self):
         self.main_text+=self.buffer
-    
