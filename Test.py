@@ -10,10 +10,12 @@ from llvmlite import binding
 
 import subprocess
 
+from ctypes import CFUNCTYPE, c_double, c_int, c_byte, POINTER
+
 def main():
 
     # Open input file
-    with open("Testy/Structure.txt", "r") as file:
+    with open("Testy/loop.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 
@@ -131,7 +133,45 @@ def main():
 
     # # Usuń plik tymczasowy
     # #subprocess.call(['del', filename], shell=True)
-       
+    def exec(module):
+        binding.initialize()
+        binding.initialize_native_target()
+        binding.initialize_native_asmprinter()
+
+        target = binding.Target.from_default_triple()
+        target_machine = target.create_target_machine()
+
+        backing_mod = binding.parse_assembly("")
+        engine = binding.create_mcjit_compiler(backing_mod, target_machine)
+
+        mod = binding.parse_assembly(str(module))
+        mod.verify()
+        engine.add_module(mod)
+        engine.finalize_object()
+        engine.run_static_constructors()
+
+        func_ptr = engine.get_function_address("main")
+
+        cFunc = CFUNCTYPE(c_int, c_int, POINTER(c_byte))(func_ptr)
+        cFunc(0, None)
+
+    def compile(module, basename):
+        binding.initialize()
+        binding.initialize_native_asmprinter()
+        binding.initialize_native_target()
+
+        target = binding.Target.from_default_triple()
+        target_machine = target.create_target_machine()
+
+        mod = binding.parse_assembly(str(module))
+        mod.verify()
+        with open(f"{basename}.o", "wb") as o:
+            o.write(target_machine.emit_object(mod))
+
+# print(code)
+# you can pass string or module generated from ir.builder
+    exec(whole_program_LLVM)
+    compile(whole_program_LLVM, "test_output")   
 
 if __name__ == '__main__':
     main()

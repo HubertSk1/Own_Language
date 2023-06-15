@@ -6,3 +6,5 @@ REAL r
 a = circle(10,20,10.);
 
 b= a.r + 3.5;
+
+PRINT(b);
