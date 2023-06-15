@@ -71,10 +71,8 @@ class MyListener(MY_LANGListener):
     def print_variables(self):
         for var in self.current_namespace.variables:
             print(self.current_namespace.variables[var])
-        print(self.current_namespace.variables.keys())
 
     def exitProg(self, ctx):
-        self.print_variables()
         pass
     
     def exitStatements(self, ctx):
@@ -340,7 +338,12 @@ class MyListener(MY_LANGListener):
                 err=1
                 for index,field in enumerate(fields):
                     if field == ID2:
-                        self.gen.get_structure_element(self.n,self.structures[this_structure.typ].name,index)
+                        self.gen.get_structure_element(self.n,self.structures[this_structure.typ].name,index,this_structure.name)
+                        self.n+=1
+                        if types[index]=="INT":
+                            self.gen.load_int(self.n,f"%{self.n-1}")
+                        if types[index]=="REAL":
+                            self.gen.load_real(self.n,f"%{self.n-1}")
                         self.stack.append(Value(f"%{self.n}",types[index]))
                         self.n+=1
                         err=0

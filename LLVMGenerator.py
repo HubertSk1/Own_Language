@@ -118,5 +118,5 @@ class LLVMGenerator():
         self.buffer+=f"%{fieldname}_{number} = getelementptr %{structurename}, %{structurename}* {allocaled_name}, i32 0, i32 {number_of_field}\n"
         self.buffer+=f"store {type_of_value} {value_to_store}, float* %{fieldname}_{number}\n"
 
-    def get_structure_element(self,number,structure_type,field_number):
-        self.buffer+=f"%{number} = getelementptr %{structure_type}, %{structure_type}* %f, i32 0, i32 {field_number}\n"
+    def get_structure_element(self,number,structure_type,field_number,structure_name):
+        self.buffer+=f"%{number} = getelementptr {structure_type}, {structure_type}* {structure_name}, i32 0, i32 {field_number}\n"
