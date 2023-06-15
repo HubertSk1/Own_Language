@@ -15,7 +15,7 @@ from ctypes import CFUNCTYPE, c_double, c_int, c_byte, POINTER
 def main():
 
     # Open input file
-    with open("Testy/loop.txt", "r") as file:
+    with open("Testy/Testread.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 
@@ -50,7 +50,7 @@ def main():
     walker.walk(printer, tree)
     whole_program_LLVM = printer.gen.print_main_text()
     print(whole_program_LLVM)
-    
+
     def exec(module):
         binding.initialize()
         binding.initialize_native_target()
@@ -86,8 +86,6 @@ def main():
         with open(f"{basename}.o", "wb") as o:
             o.write(target_machine.emit_object(mod))
 
-# print(code)
-# you can pass string or module generated from ir.builder
     exec(whole_program_LLVM)
     compile(whole_program_LLVM, "test_output")   
 
