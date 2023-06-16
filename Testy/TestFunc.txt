@@ -1,7 +1,9 @@
 DEFINE aal(INT a,REAL b)
     BEGIN
     c=10.2;
+    PRINT(c);
+    PRINT(b);
     RETURN a 
-aas=10.
-argdsa = CALL aal(102,aas);
+
+argdsa = CALL aal(102,10.12);
 PRINT(argdsa);

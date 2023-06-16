@@ -1,6 +1,0 @@
-a=1;
-REPEAT 10 BEGIN     
-    PRINT(a);
-    a = a +1;
-END;
-

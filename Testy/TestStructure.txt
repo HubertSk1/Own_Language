@@ -6,3 +6,7 @@ REAL r
 a = circle(10,20,10.);
 
 PRINT(a.r);
+PRINT(a.point_x);
+PRINT(a.point_y);
+b=a.r + 10.;
+PRINT(b);

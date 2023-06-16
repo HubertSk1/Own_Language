@@ -1,9 +1,0 @@
-IF 2==2
-DO 
-PRINT(1.2);
-ELSE 
-DO 
-PRINT(3.2); 
-END;
-
-

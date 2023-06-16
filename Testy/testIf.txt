@@ -1,0 +1,25 @@
+IF 2==2
+DO 
+PRINT(1);
+ELSE 
+DO 
+PRINT(0); 
+END;
+
+IF 3>2
+DO 
+PRINT(1);
+ELSE 
+DO 
+PRINT(0); 
+END;
+
+IF 22<3
+DO 
+PRINT(1);
+ELSE 
+DO 
+PRINT(0); 
+END;
+
+

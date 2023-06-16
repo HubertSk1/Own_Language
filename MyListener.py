@@ -36,7 +36,7 @@ class name_space:
     def __init__(self,consist_of_namespaces,name="None"):
         self.name = name
         self.consist_of_namespaces=consist_of_namespaces
-        self.variables = self.get_prev_variables()
+        self.variables = self.get_prev_variables()    
     def get_prev_variables(self):
         if self.consist_of_namespaces:
             return copy(self.consist_of_namespaces[-1].variables)
@@ -47,6 +47,7 @@ class fun:
     def __init__(self,name,types):
         self.name = name
         self.types = types
+
 class structure:
     def __init__(self,name,fields,types):
         self.name=name
@@ -59,7 +60,7 @@ class MyListener(MY_LANGListener):
         self.current_namespace=name_space([],"global")
         self.n = 1
         self.gen = LLVMGenerator()
-        self.functions=dict()
+        self.functions=dict() 
         self.blocknumber=0
         self.block_stack=[]
         self.structures=dict()
@@ -71,9 +72,6 @@ class MyListener(MY_LANGListener):
     def print_variables(self):
         for var in self.current_namespace.variables:
             print(self.current_namespace.variables[var])
-
-    def exitProg(self, ctx):
-        pass
     
     def exitStatements(self, ctx):
         self.gen.clear_buffer()
@@ -367,8 +365,8 @@ class MyListener(MY_LANGListener):
                 raise MY_LANG_Undefined_Exception(f"Variable {ctx.ID().getText()} is undefinded in this scope (or is a structure)")
 
         elif ctx.ADD():
-            v1 = self.stack.pop()
             v2 = self.stack.pop()
+            v1 = self.stack.pop()
 
             if v1.typ == "INT" and v2.typ == "INT":
                 self.gen.add_i32(self.n, v1.name, v2.name)
@@ -397,8 +395,8 @@ class MyListener(MY_LANGListener):
             
 
         elif ctx.SUB():
-            v1 = self.stack.pop()
             v2 = self.stack.pop()
+            v1 = self.stack.pop()
 
             if v1.typ == "INT" and v2.typ == "INT":
                 self.gen.sub_i32(self.n, v1.name, v2.name)
@@ -426,8 +424,8 @@ class MyListener(MY_LANGListener):
                 raise TypeError(f"Unsupported type for sub: {v1.typ}, {v2.typ}")
 
         elif ctx.DIV():
-            v1 = self.stack.pop()
             v2 = self.stack.pop()
+            v1 = self.stack.pop()
 
             if v1.typ == "INT" and v2.typ == "INT":
                 self.gen.div_i32(self.n, v1.name, v2.name)
@@ -454,8 +452,8 @@ class MyListener(MY_LANGListener):
                 raise TypeError(f"Unsupported type for div: {v1.typ}, {v2.typ}")
 
         elif ctx.MUL():
-            v1 = self.stack.pop()
             v2 = self.stack.pop()
+            v1 = self.stack.pop()
 
             if v1.typ == "INT" and v2.typ == "INT":
                 self.gen.mul_i32(self.n, v1.name, v2.name)

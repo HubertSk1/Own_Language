@@ -15,7 +15,7 @@ from ctypes import CFUNCTYPE, c_double, c_int, c_byte, POINTER
 def main():
 
     # Open input file
-    with open("Testy/Ify.txt", "r") as file:
+    with open("Testy/Testloop.txt", "r") as file:
         input_code = file.read()
     input_stream = InputStream(input_code)
 

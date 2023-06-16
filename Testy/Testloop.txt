@@ -1,0 +1,10 @@
+a=1;
+number=10;
+REPEAT number+1 BEGIN     
+    PRINT(a);
+    a = a +1;
+        REPEAT 3 BEGIN  
+        b=10.   
+        PRINT(10.);
+        END;
+END;
