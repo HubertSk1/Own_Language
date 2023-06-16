@@ -293,8 +293,8 @@ class MyListener(MY_LANGListener):
 
 
     def exitBool_stat(self, ctx):
-        var1=self.stack.pop()
         var2=self.stack.pop()
+        var1=self.stack.pop()
         if var1.typ != var2.typ:
             raise MY_LANG_Not_Supported_Arguments_type("Types to be  compared must be the same")
         if var1.typ not in ["REAL","INT"]:

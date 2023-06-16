@@ -1,5 +1,5 @@
-IF 3<2
- DO 
+IF 2==2
+DO 
 PRINT(1.2);
 ELSE 
 DO 

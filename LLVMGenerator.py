@@ -89,7 +89,7 @@ class LLVMGenerator():
         self.buffer+=f"{id} =icmp {operation} {type} {a},{b}\n"
 
     def cond_jump(self,number):
-        self.buffer+=f"br i1 %cmp{number}, label %iffalse{number}, label %iftrue{number}\n"
+        self.buffer+=f"br i1 %cmp{number}, label %iftrue{number}, label %iffalse{number}\n"
 
     def loop_jump(self,number):
         self.buffer+=f"br i1 %cmp{number}, label %end{number}, label %loop{number}\n"
