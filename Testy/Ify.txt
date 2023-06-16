@@ -1,6 +1,9 @@
-IF 2>2 DO 
-    IF 2>2 DO 
-    ELSE DO a=3; END;
-ELSE DO a=3; END;
+IF 3<2
+ DO 
+PRINT(1.2);
+ELSE 
+DO 
+PRINT(3.2); 
+END;
 
 
