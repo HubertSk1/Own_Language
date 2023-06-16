@@ -80,6 +80,9 @@ class MyListener(MY_LANGListener):
 
     def exitFunction_header(self, ctx):
         if ctx.ID().getText() not in self.functions.keys():
+            prev_namespace=copy(self.current_namespace)
+            prev_namespace.consist_of_namespaces.append(prev_namespace)
+            self.current_namespace=name_space(prev_namespace.consist_of_namespaces)
             types=[]
             types_name=[]
             names=[]
@@ -89,7 +92,7 @@ class MyListener(MY_LANGListener):
                 if typ.getText() =="INT":
                     types.append("i32")
                 elif typ.getText() =="REAL":
-                    types.append("float")
+                    types.append("double")
                 else :
                     raise MY_LANG_Not_Supported_Arguments_type(f"Unsupported  type as function argument")
             for name in ctx_arg_list.ID():
@@ -103,8 +106,8 @@ class MyListener(MY_LANGListener):
                 self.gen.alloca(f"%{self.n}", types[i])
                 if types[i]=="i32":
                     self.gen.asign_i32(f"%{self.n}",f"%{names[i]}")
-                elif types[i]=="float":
-                    self.gen.asign_float(f"%{self.n}",f"%{names[i]}")
+                elif types[i]=="double":
+                    self.gen.asign_double(f"%{self.n}",f"%{names[i]}")
                 self.current_namespace.variables[names[i]]=Value(f'%{self.n}',types_name[i])
                 self.n+=1
             self.functions[ctx.ID().getText()]=fun(ctx.ID().getText(),types_name)
@@ -112,11 +115,7 @@ class MyListener(MY_LANGListener):
             raise MY_Lang_Override_Exception(f"Cant override function {ctx.ID().getText()}")
 
     def enterDefine(self,ctx):
-        prev_namespace=copy(self.current_namespace)
-        prev_namespace.consist_of_namespaces.append(prev_namespace)
-        self.current_namespace=name_space(prev_namespace.consist_of_namespaces)
         self.n=1
-        pass
 
     def exitDefine(self, ctx):
         ctx = ctx.end_function()
@@ -147,7 +146,7 @@ class MyListener(MY_LANGListener):
                 if var.typ =="INT":
                     txt+="i32 "
                 if var.typ == "REAL":
-                    txt+="float "
+                    txt+="double "
                 txt+= var.name 
                 txt+=','
             txt=txt[0:-1]
@@ -195,19 +194,19 @@ class MyListener(MY_LANGListener):
             elif v.typ == "REAL":
                 if var_name in self.current_namespace.variables:
                     name = self.current_namespace.variables[var_name].name        
-                    self.gen.asign_float(name,v.name)
+                    self.gen.asign_double(name,v.name)
                 else:
                     if self.current_namespace.name=="global":
                         self.current_namespace.variables[var_name] = Value(f"@{var_name}", "REAL")
-                        self.gen.global_var(f"@{var_name}", "float", 0.00)
-                        self.gen.asign_float(f"@{var_name}", v.name)
+                        self.gen.global_var(f"@{var_name}", "double", 0.00)
+                        self.gen.asign_double(f"@{var_name}", v.name)
                     else:
                         self.current_namespace.variables[var_name] = Value(f"%{self.n}", "REAL")
-                        self.gen.alloca(f"%{self.n}", "float")
-                        self.gen.asign_float(f"%{self.n}", v.name)
+                        self.gen.alloca(f"%{self.n}", "double")
+                        self.gen.asign_double(f"%{self.n}", v.name)
                         self.n+=1
             elif v.typ in self.structures.keys():
-                    types=["i32" if x =="INT" else "float" for x in self.structures[v.typ].types ]
+                    types=["i32" if x =="INT" else "double" for x in self.structures[v.typ].types ]
                     self.gen.alloca(f"%{self.n}",f"%{v.typ}")
                     self.stack.reverse()
                     for i in range(len(types)):
@@ -221,7 +220,7 @@ class MyListener(MY_LANGListener):
         if v.typ == "INT":
             self.gen.print_i32(v.name,self.n)
         elif v.typ == "REAL":
-            self.gen.printf_float(v.name,self.n)
+            self.gen.printf_double(v.name,self.n)
         self.n+=1
 
     def exitRead(self, ctx):
@@ -230,7 +229,8 @@ class MyListener(MY_LANGListener):
         if self.current_namespace.variables[var_name].typ == "INT":
             self.gen.scanf_i32(id,self.n)
         elif self.current_namespace.variables[var_name].typ == "REAL":
-            self.gen.scanf_float(id,self.n)
+            self.gen.scanf_double(id,self.n)
+        self.n+=1
 
     def enterLoop_header(self,ctx):
         self.blocknumber+=1
@@ -280,7 +280,7 @@ class MyListener(MY_LANGListener):
                 text+=f"i32,\n"
             elif t.getText()=="REAL":
                 types.append("REAL")
-                text+=f"float,\n"
+                text+=f"double,\n"
             else:
                 raise MY_LANG_Not_Supported_Arguments_type("STRUCT only support REAL and INT for now")
         text=text[0:-2]
@@ -301,7 +301,7 @@ class MyListener(MY_LANGListener):
             raise MY_LANG_Not_Supported_Arguments_type("Comparison only of REAL and INT is possible")
         typ = ""
         if var1.typ =="REAL":
-            typ="float"
+            typ="double"
         elif var1.typ =="INT":
             typ="i32"
         operation=""
@@ -323,7 +323,7 @@ class MyListener(MY_LANGListener):
 
         elif ctx.call_function():
             self.stack.append(Value(f"%{self.n}","INT"))
-
+            self.n+=1
         elif ctx.create_structure():
             if ctx.create_structure().ID().getText() in self.structures.keys():
                 self.stack.append(Value(f"%{self.n}",f"{ctx.create_structure().ID().getText()}"))
@@ -376,19 +376,19 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             elif v1.typ == "REAL" and v2.typ == "REAL":
-                self.gen.add_float(self.n, v1.name, v2.name)
+                self.gen.add_double(self.n, v1.name, v2.name)
                 self.stack.append(Value(f"%{self.n}", "REAL"))
                 self.n+=1
 
             elif v1.typ == "INT" and v2.typ == "REAL":
-                self.gen.int_to_float(self.n, v1.name)
-                self.gen.add_float(self.n+1, f"%{self.n}", v2.name)
+                self.gen.int_to_double(self.n, v1.name)
+                self.gen.add_double(self.n+1, f"%{self.n}", v2.name)
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
 
             elif v1.typ == "REAL" and v2.typ == "INT":
-                self.gen.int_to_float(self.n, v2.name)
-                self.gen.add_float(self.n+1, v1.name, f"%{self.n}")
+                self.gen.int_to_double(self.n, v2.name)
+                self.gen.add_double(self.n+1, v1.name, f"%{self.n}")
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
 
@@ -406,19 +406,19 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             elif v1.typ == "REAL" and v2.typ == "REAL":
-                self.gen.sub_float(self.n, v1.name, v2.name)
+                self.gen.sub_double(self.n, v1.name, v2.name)
                 self.stack.append(Value(f"%{self.n}", "REAL"))
                 self.n+=1
 
             elif v1.typ == "INT" and v2.typ == "REAL":
-                self.gen.int_to_float(self.n, v1.name)
-                self.gen.sub_float(self.n+1, f"%{self.n}", v2.name)
+                self.gen.int_to_double(self.n, v1.name)
+                self.gen.sub_double(self.n+1, f"%{self.n}", v2.name)
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
 
             elif v1.typ == "REAL" and v2.typ == "INT":
-                self.gen.int_to_float(self.n, v2.name)
-                self.gen.sub_float(self.n+1, v1.name, f"%{self.n}")
+                self.gen.int_to_double(self.n, v2.name)
+                self.gen.sub_double(self.n+1, v1.name, f"%{self.n}")
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
 
@@ -435,19 +435,19 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             elif v1.typ == "REAL" and v2.typ == "REAL":
-                self.gen.div_float(self.n, v1.name, v2.name)
+                self.gen.div_double(self.n, v1.name, v2.name)
                 self.stack.append(Value(f"%{self.n}", "REAL"))
                 self.n+=1
 
             elif v1.typ == "INT" and v2.typ == "REAL":
-                self.gen.int_to_float(self.n, v1.name)
-                self.gen.div_float(self.n+1, f"%{self.n}", v2.name)
+                self.gen.int_to_double(self.n, v1.name)
+                self.gen.div_double(self.n+1, f"%{self.n}", v2.name)
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
 
             elif v1.typ == "REAL" and v2.typ == "INT":
-                self.gen.int_to_float(self.n, v2.name)
-                self.gen.div_float(self.n+1, v1.name, f"%{self.n}")
+                self.gen.int_to_double(self.n, v2.name)
+                self.gen.div_double(self.n+1, v1.name, f"%{self.n}")
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
             else:
@@ -463,19 +463,19 @@ class MyListener(MY_LANGListener):
                 self.n+=1
 
             elif v1.typ == "REAL" and v2.typ == "REAL":
-                self.gen.mul_float(self.n, v1.name, v2.name)
+                self.gen.mul_double(self.n, v1.name, v2.name)
                 self.stack.append(Value(f"%{self.n}", "REAL"))
                 self.n+=1
 
             elif v1.typ == "INT" and v2.typ == "REAL":
-                self.gen.int_to_float(self.n, v1.name)
-                self.gen.mul_float(self.n+1, f"%{self.n}", v2.name)
+                self.gen.int_to_double(self.n, v1.name)
+                self.gen.mul_double(self.n+1, f"%{self.n}", v2.name)
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2                
 
             elif v1.typ == "REAL" and v2.typ == "INT":
-                self.gen.int_to_float(self.n, v2.name)
-                self.gen.mul_float(self.n+1, v1.name, f"%{self.n}")
+                self.gen.int_to_double(self.n, v2.name)
+                self.gen.mul_double(self.n+1, v1.name, f"%{self.n}")
                 self.stack.append(Value(f"%{self.n+1}", "REAL"))
                 self.n+=2
             else:

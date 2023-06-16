@@ -14,9 +14,10 @@ class LLVMGenerator():
         text += "@print_f = private unnamed_addr constant [4 x i8] c\"%f\\0A\\00\", align 1\n"
         text += "@scan_f = private unnamed_addr constant [3 x i8] c\"%f\\00\", align 1\n"
         text += "@.stri = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\", align 1\n"
-        text += "@.strd = private unnamed_addr constant [4 x i8] c\"%f\\0A\\00\", align 1\n"
+        text += "@strpd = constant [4 x i8] c\"%f\\0A\\00\", align 1\n"
+        # text += "@.strd = private unnamed_addr constant [4 x i8] c\"%d\0A\00\", align 1\n"
         text += "@.strlf = private unnamed_addr constant [4 x i8] c\"%lf\\00\", align 1\n"
-        text += "@.strs = private unnamed_addr constant [4 x i8] c\"%s\\0A\\00\", align 1\n"
+        text += "@strs = constant [3 x i8] c\"%d\\00\", align 1\n"
         text += "@.strsf = private unnamed_addr constant [3 x i8] c\"%s\\00\", align 1\n"
         text += "@.strsfn = private unnamed_addr constant [6 x i8] c\"%[^\\0A]\\00\", align 1\n"
         text += self.header_text
@@ -29,56 +30,57 @@ class LLVMGenerator():
     def add_i32(self,id,val1,val2):
         self.buffer += f"%{id} = add i32 {val1},{val2}\n"
 
-    def add_float(self, id, val1, val2):
-        self.buffer += f"%{id} = fadd float {val1}, {val2}\n"
+    def add_double(self, id, val1, val2):
+        self.buffer += f"%{id} = fadd double {val1}, {val2}\n"
 
     def sub_i32(self,id,val1,val2):
         self.buffer += f"%{id} = sub i32 {val1},{val2}\n"
 
-    def sub_float(self, id, val1, val2):
-        self.buffer += f"%{id} = fsub float {val1}, {val2}\n"
+    def sub_double(self, id, val1, val2):
+        self.buffer += f"%{id} = fsub double {val1}, {val2}\n"
     
     def div_i32(self, id, val1, val2):
         self.buffer += f"%{id} = sdiv i32 {val1}, {val2}\n"
 
-    def div_float(self, id, val1, val2):
-        self.buffer += f"%{id} = fdiv float {val1}, {val2}\n"
+    def div_double(self, id, val1, val2):
+        self.buffer += f"%{id} = fdiv double {val1}, {val2}\n"
 
     def mul_i32(self,id,val1,val2):
         self.buffer += f"%{id} = mul i32 {val1},{val2}\n"
 
-    def mul_float(self, id, val1, val2):
-        self.buffer += f"%{id} = fmul float {val1}, {val2}\n"
+    def mul_double(self, id, val1, val2):
+        self.buffer += f"%{id} = fmul double {val1}, {val2}\n"
 
     def print_i32(self,id,placeholder):
         self.buffer += f"call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.stri, i32 0, i32 0), i32 {id})\n"
 
-    def printf_float(self, id, placeholder):
-        self.buffer += f"call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strd, i32 0, i32 0), float {id})\n"
-        
+    def printf_double(self, id, placeholder):
+        self.buffer += f"%{placeholder} = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double {id})\n"
+        # "%"+reg+" = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %"+(reg-1)+")\n"
+        # raise NotImplementedError()
     def scanf_i32(self, id,placeholder):
-        self.buffer += f"%{placeholder} = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.stri, i32 0, i32 0), i32* {id})\n"
- 
-    def scanf_float(self, id, placeholder):
-        self.buffer += f"%{placeholder}  = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strlf, i32 0, i32 0), float* {id})\n"
-
+        self.buffer += f"%{placeholder} = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @strs, i32 0, i32 0), i32* {id})\n"
+        # raise NotImplementedError()
+    def scanf_double(self, id, placeholder):
+        self.buffer += f"%{placeholder}  = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strlf, i32 0, i32 0), double* {id})\n"
+        # raise NotImplementedError()
     def asign_i32(self,id,value):
         self.buffer += f"store i32 {value}, i32* {id}\n"
     
-    def asign_float(self, id, value):
-        self.buffer += f"store float {value}, float* {id}\n"
+    def asign_double(self, id, value):
+        self.buffer += f"store double {value}, double* {id}\n"
 
     def alloca(self,id,type):
         self.buffer += f"{id} = alloca {type}\n"
 
-    def int_to_float(self, id, val):
-        self.buffer += f"%{id} = sitofp i32 {val} to float\n"
+    def int_to_double(self, id, val):
+        self.buffer += f"%{id} = sitofp i32 {val} to double\n"
 
     def load_int(self,placeholder,id):
         self.buffer += f"%{placeholder}= load i32, i32* {id}\n"
 
     def load_real(self,placeholder,id):
-        self.buffer += f"%{placeholder}= load float, float* {id}\n"
+        self.buffer += f"%{placeholder}= load double, double* {id}\n"
 
     def function_start(self,id,args):
         self.buffer = f"define i32 @{id}({args}) nounwind "+"{ \n"
@@ -116,7 +118,7 @@ class LLVMGenerator():
     
     def put_value_to_structure(self,number,fieldname,structurename,number_of_field,value_to_store,type_of_value,allocaled_name):
         self.buffer+=f"%{fieldname}_{number} = getelementptr %{structurename}, %{structurename}* {allocaled_name}, i32 0, i32 {number_of_field}\n"
-        self.buffer+=f"store {type_of_value} {value_to_store}, float* %{fieldname}_{number}\n"
+        self.buffer+=f"store {type_of_value} {value_to_store}, {type_of_value}* %{fieldname}_{number}\n"
 
     def get_structure_element(self,number,structure_type,field_number,structure_name):
         self.buffer+=f"%{number} = getelementptr {structure_type}, {structure_type}* {structure_name}, i32 0, i32 {field_number}\n"
